@@ -4,5 +4,22 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"editor.formatOnSave": true,
+		"editor.formatOnPaste": true,
+		"editor.formatOnType": true,
+		"[typescript]": {
+			"editor.defaultFormatter": "vscode.typescript-language-features"
+		},
+		"[typescriptreact]": {
+			"editor.defaultFormatter": "vscode.typescript-language-features"
+		},
+		"[css]": {
+			"editor.suggest.insertMode": "replace",
+			"editor.defaultFormatter": "vscode.css-language-features",
+		},
+		"[tailwindcss]": {
+			"editor.defaultFormatter": "bradlc.vscode-tailwindcss"
+		}
+	}
 }
