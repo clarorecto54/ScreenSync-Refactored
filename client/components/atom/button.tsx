@@ -9,7 +9,7 @@ const ButtonVariants = cva(
     clsx( //* BASE STYLING
         "bg-[#DF2020] hover:bg-[#B21A1A]", //? Background Styling
         "h-full w-full min-h-max min-w-max", //? Button Size
-        "relative flex flex-row justify-center items-center", //? Child Placement
+        "relative flex flex-row justify-center items-center", //? Display Styling
         "text-white text-center", //? Text Styling
         "font-[500] font-[Montserrat]", //? Font Styling
     ), {
