@@ -1,12 +1,28 @@
 "use client"
+import { useEffect, useState } from "react";
 import Button from "./atom/button";
 import Textbox from "./atom/textbox";
+import { useGlobals } from "./hooks/useGlobals";
 import { useSocket } from "./hooks/useSocket";
 import { classMerge } from "./utils";
 import Image from "next/image";
 
 export default function MenuForm() {
+    /* ----- STATES & HOOKS ----- */
     const socket = useSocket()
+    const globals = useGlobals()
+    const [inputs, setInputs] = useState<{ //? User inputs
+        username: string,
+        meetingKey: string
+    }>({
+        username: "",
+        meetingKey: ""
+    })
+    /* ------ EVENT HANDLER ----- */
+    useEffect(() => {
+        globals.username = inputs.username
+    }, [inputs])
+    /* -------- RENDERING ------- */
     return <div //* CONTAINER
         className={classMerge(
             "h-full w-full", //? Sizing
@@ -16,7 +32,7 @@ export default function MenuForm() {
         <div //* LOGO & APP NAME
             className="flex flex-row gap-[8px] justify-center items-center">
             <div //* LOGO CONTAINER
-                className="relative h-[120%] aspect-square">
+                className="relative h-[calc(8*7px)] aspect-square">
                 <Image //* LOGO
                     src="/[Logo] TUP.png"
                     alt=""
@@ -61,19 +77,23 @@ export default function MenuForm() {
                     useIcon iconSrc="/[Icons] Participants.png"
                     textSize={"small"}
                     placeholder="What is your name?"
-                    className="" />
-                <Textbox //* MEETING PASSCODE
+                    onChange={(thisElement) => {
+                        setInputs({ ...inputs, username: thisElement.target.value })
+                    }} />
+                {inputs.username.length > 3 && <Textbox //* MEETING PASSCODE
                     useIcon iconSrc="/[Icons] Key.png"
                     textSize={"small"}
                     placeholder="Session key here"
-                    className="" />
+                    onChange={(thisElement) => {
+                        setInputs({ ...inputs, meetingKey: thisElement.target.value })
+                    }} />}
             </div>
-            <Button //* START MEETING
+            {inputs.username.length > 3 && <Button //* START MEETING
                 useIcon iconSrc="/[Icon] Join.png" iconOverlay
                 textSize={"small"}
                 className="font-[600]">
                 Start Meeting
-            </Button>
+            </Button>}
         </form>
     </div>
 }
