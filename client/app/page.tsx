@@ -1,3 +1,4 @@
+import { LobbyContextProvider } from "@/components/hooks/useLobby";
 import MenuForm from "@/components/menu_form";
 import { classMerge } from "@/components/utils";
 import Image from "next/image";
@@ -25,7 +26,9 @@ export default function Home() {
           "p-[32px] px-[64px]", //? Sizing
           "bg-white rounded-[32px] panelStyle", //? Background
         )}>
-        <MenuForm />
+        <LobbyContextProvider>
+          <MenuForm />
+        </LobbyContextProvider>
       </div>
     </div>
   </div>
