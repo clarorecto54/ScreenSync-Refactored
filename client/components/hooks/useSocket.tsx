@@ -1,3 +1,4 @@
+"use client"
 import { ReactNode, createContext, useEffect, useState, useContext } from "react";
 import { Socket, io } from "socket.io-client"
 /* -------- INTERFACE ------- */

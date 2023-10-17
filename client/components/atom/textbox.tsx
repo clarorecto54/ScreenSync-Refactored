@@ -94,7 +94,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(({
                 IconContainerVariants({ className: iconClass, textSize }), //? Base Styling
             )}>
             <div //* ICON
-                className="relative aspect-square h-[50%]">
+                className="relative aspect-square h-[40%]">
                 <Image
                     className={classMerge(
                         "aspect-square", //? Base Styling

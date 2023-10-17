@@ -9,7 +9,7 @@ export default function MenuPreview() {
             Menu Form
             <div //* MENU CONTAINER
                 className={classMerge(
-                    "h-[60vh] w-[20vw] p-[32px]", //? Sizing
+                    "w-[20vw] p-[32px]", //? Sizing
                     "bg-white rounded-[32px]", //? Background Styling
                 )}>
                 <MenuForm />
