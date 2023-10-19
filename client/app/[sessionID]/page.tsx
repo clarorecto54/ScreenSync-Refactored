@@ -1,5 +1,6 @@
 import MainDisplay from "@/components/display";
 import Header from "@/components/header";
+import { SessionContextProvider } from "@/components/hooks/useSession";
 import { classMerge } from "@/components/utils";
 
 export default function SessionPage() {
@@ -10,7 +11,9 @@ export default function SessionPage() {
             "bg-black", //? Background
             "text-white font-[600] font-[Gotham]", //? Font Styling
         )}>
-        <Header />
-        <MainDisplay />
+        <SessionContextProvider>
+            <Header />
+            <MainDisplay />
+        </SessionContextProvider>
     </div>
 }
