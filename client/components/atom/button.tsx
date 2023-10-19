@@ -1,5 +1,5 @@
 "use client"
-import { ButtonHTMLAttributes, forwardRef } from "react";
+import { ButtonHTMLAttributes, HTMLAttributes, forwardRef } from "react";
 import { cva, VariantProps } from "class-variance-authority";
 import clsx from "clsx";
 import Image from "next/image";
@@ -54,13 +54,17 @@ interface ButtonProps extends
     iconOverlay?: boolean //? Icon Overlay
     customOverlay?: string //? Icon Custom Overlay
     useNotif?: boolean //? Button Notification
+    containerClass?: HTMLAttributes<HTMLDivElement>["className"] //? Container Class
 }
 /* -------- COMPONENT ------- */
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
-    circle, useIcon, iconSrc, iconOverlay, customOverlay, useNotif, textSize, className, children, ...props
+    circle, useIcon, iconSrc, iconOverlay, customOverlay, useNotif, containerClass, textSize, className, children, ...props
 }, ref) => {
     return <div //* CONTAINER
-        className="min-w-max min-h-max">
+        className={classMerge(
+            "min-w-max min-h-max", //? Base
+            containerClass //? Conditional
+        )}>
         <button ref={ref} {...props} //* BUTTON
             className={classMerge(
                 ButtonVariants({ className, textSize }), //? Base Style

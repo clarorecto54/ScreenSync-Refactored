@@ -1,12 +1,16 @@
+"use client"
+import { useSession } from "./hooks/useSession";
 import { classMerge } from "./utils";
 import Image from "next/image";
 export default function MainDisplay() {
+    /* ----- STATES & HOOKS ----- */
+    const session = useSession()
     return <div //* CONTAINER
         className={classMerge(
             "h-full w-full", //? Sizing
             "rounded-3xl overflow-hidden", //? Border
         )}>
-        <DefaultDisplay />
+        {!session.isStreaming && <DefaultDisplay />}
     </div>
 }
 function DefaultDisplay() {

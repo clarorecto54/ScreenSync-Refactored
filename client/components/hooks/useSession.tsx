@@ -1,3 +1,4 @@
+"use client"
 import { ReactNode, createContext, useContext } from "react"
 /* -------- INTERFACE ------- */
 interface SessionProps {
