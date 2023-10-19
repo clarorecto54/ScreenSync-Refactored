@@ -47,7 +47,7 @@ function Logo() {
             <div //* SERVER STATUS
                 className="flex gap-[8px] items-center">
                 <label //* LABEL
-                    className="text-[12px] italic Unselectable">
+                    className="text-[10px] italic Unselectable">
                     {socket.isConnected ? "Connected" : "Disconnected"}
                 </label>
                 <div //* STATUS ICON
@@ -74,6 +74,7 @@ function Description() {
 }
 function FormMenu() {
     const globals = useGlobals()
+    const { roomList } = useLobby()
     const [inputs, setInputs] = useState<{ //? User inputs
         username: string,
         meetingKey: string
@@ -107,11 +108,27 @@ function FormMenu() {
                     setInputs({ ...inputs, meetingKey: thisElement.target.value })
                 }} />}
         </div>
-        {inputs.username.length > 3 && <Button //* START MEETING
-            useIcon iconSrc="/[Icon] Join.png" iconOverlay
-            textSize={"small"} type="submit"
-            className="font-[600]">
-            Start Meeting
-        </Button>}
+        {inputs.username.length > 3 && <div //* CTA BUTTON
+            className="flex gap-[8px] items-center justify-center">
+            <Button //* START MEETING
+                useIcon iconSrc="/[Icon] Join.png" iconOverlay
+                textSize={"small"} type="submit"
+                className={classMerge(
+                    "font-[600]", //? Font Styling
+                    "hover:scale-90", //? Hover
+                    "transition-all duration-500", //? Animation
+                )}>
+                Start Meeting
+            </Button>
+            {roomList.length > 0 && <Button //* ROOM LIST
+                textSize={"small"}
+                className={classMerge(
+                    "font-[600] text-black", //? Font Styling
+                    "bg-gray-100 hover:scale-90 hover:bg-gray-200", //? Background
+                    "transition-all duration-500", //? Animation
+                )}>
+                Sessions
+            </Button>}
+        </div>}
     </form>
 }
