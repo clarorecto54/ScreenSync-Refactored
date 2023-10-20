@@ -1,12 +1,10 @@
-// TODO Finalize the design of the dock
 import Button from "./atom/button";
 import { classMerge } from "./utils";
 export default function AppDock() {
     return <div //* CONTAINER
         className={classMerge(
             "w-full p-[16px] px-[64px]", //? Sizing
-            "flex items-center justify-between", //? Display
-            // "border-[1px] border-red-500" //? Temporary
+            "flex items-center justify-between Unselectable", //? Display
         )}>
         <Button //* COPY MEETING
             useIcon iconSrc="/[Icon] Copy.png" iconOverlay

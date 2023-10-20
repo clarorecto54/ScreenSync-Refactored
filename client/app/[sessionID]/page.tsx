@@ -3,7 +3,7 @@ import AppDock from "@/components/dock";
 import Header from "@/components/header";
 import { SessionContextProvider } from "@/components/hooks/useSession";
 import { classMerge } from "@/components/utils";
-
+// TODO Initialize the panel container for the interactive system
 export default function SessionPage() {
     return <div //* VIEWPORT
         className={classMerge(

@@ -28,12 +28,15 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         /* ------ API HANDLING ------ */
         socket.on("connect", () => setIsConneted(true))
         socket.on("disconnect", () => setIsConneted(false))
-        if (isConnected) { setSocketID(socket.id) }
         /* ----- SOCKET CLEANUP ----- */
         return () => {
             socket.disconnect()
         }
     }, [])
+    /* ----- EVENT HANDLING ----- */
+    useEffect(() => {
+        if (isConnected) { setSocketID(socket?.id || "") }
+    }, [socket, isConnected])
     return <SocketContext.Provider value={{
         socket: socket,
         socketID: socketID,

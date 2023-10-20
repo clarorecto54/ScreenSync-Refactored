@@ -18,7 +18,7 @@ function DefaultDisplay() {
         className={classMerge(
             "h-full w-full", //? Sizing
             "bg-[#525252]", //? Background
-            "flex flex-col gap-[32px] justify-center items-center", //? Display
+            "flex flex-col gap-[32px] justify-center items-center Unselectable", //? Display
         )}>
         <div //* LOGO CONTAINER
             className="relative aspect-square h-[256px]">

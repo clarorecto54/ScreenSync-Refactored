@@ -85,7 +85,7 @@ function FormMenu() {
     /* ------ EVENT HANDLER ----- */
     useEffect(() => {
         globals.username = inputs.username
-    }, [inputs])
+    }, [inputs, globals])
     return <form //* FORM
         className="h-full w-full px-[16px] flex flex-col gap-[16px]"
         onSubmit={(thisElement) => { //? What happens on submit
