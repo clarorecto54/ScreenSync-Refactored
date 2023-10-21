@@ -7,7 +7,8 @@ import { useSocket } from "./hooks/useSocket";
 import { classMerge } from "./utils";
 import Image from "next/image";
 import { useLobby } from "./hooks/useLobby";
-
+// TODO Implement the session list
+//? Show session button if there are x>0 rooms
 export default function MenuForm() {
     const { roomList } = useLobby()
     useEffect(() => {
