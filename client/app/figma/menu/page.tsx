@@ -1,6 +1,6 @@
+"use client"
 import MenuForm from "@/components/menuForm/formPanel";
 import { classMerge } from "@/components/utils";
-
 export default function MenuPreview() {
     return <div //* VIEWPORT
         className="figmaViewport">

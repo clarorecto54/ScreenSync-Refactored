@@ -1,4 +1,3 @@
-"use client"
 import { useSocket } from "../hooks/useSocket"
 import Image from "next/image"
 import { classMerge } from "../utils"

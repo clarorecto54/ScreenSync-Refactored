@@ -4,10 +4,12 @@ import { classMerge } from "../utils";
 import Room from "./room";
 
 export default function SessionsPanel() {
-    const {
+    /* ----- STATES & HOOKS ----- */
+    const { //* LOBBY CONTEXT HOOK
         roomList,
         searchRoom, setSearchRoom
     } = useLobby()
+    /* -------- RENDERING ------- */
     return <div //* CONTAINER
         className={classMerge(
             "h-full w-full max-h-[400px]", //? Sizing

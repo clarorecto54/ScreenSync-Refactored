@@ -1,7 +1,7 @@
 "use client"
 import Textbox from "../atom/textbox";
 import { classMerge } from "../utils";
-import { useState, useRef } from "react"
+import { useState } from "react"
 export default function Room({ //* ARGS
     hostID,
     hostname,
@@ -19,7 +19,6 @@ export default function Room({ //* ARGS
     const [showInput, setShowInput] = useState<boolean>(false) //? Key input visibility
     const [key, setKey] = useState<string>("") //? Key input value
     const [isWrongKey, alertWrongKey] = useState<boolean>(false)
-    const inputRef = useRef<HTMLInputElement>(null)
     /* -------- RENDERING ------- */
     return <button //* CONTAINER
         onClick={() => {
@@ -49,6 +48,7 @@ export default function Room({ //* ARGS
                 thisElement.preventDefault()
                 if (meetingKey === key) {
                     // TODO EVENT AFTER THE PASSWORD IS CORRECT
+                    //? Create a room based on the room info
                     alertWrongKey(false)
                     console.log("passcode is correct")
                 }
@@ -61,10 +61,9 @@ export default function Room({ //* ARGS
                 showInput ? "h-full" : "h-0", //? Conditional
             )}>
             {showInput && <Textbox //* PASSCODE INPUT
-                ref={inputRef} autoFocus
+                autoFocus maxLength={32}
                 useIcon iconSrc="/[Icons] Key.png"
                 textSize={"small"} placeholder="Put the key here"
-                maxLength={32}
                 onChange={(thisElement) => {
                     setKey(thisElement.target.value)
                 }}

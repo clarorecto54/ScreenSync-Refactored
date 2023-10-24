@@ -21,7 +21,7 @@ export function GlobalContextProvider({ children }: { children: ReactNode }) {
     /* ----- STATES & HOOKS ----- */
     const [username, setUsername] = useState<string>('')
     const [meetingCode, setMeetingCode] = useState<string>("")
-    /* -------- RENDERING ------- */
+    /* -------- PROVIDER -------- */
     return <GlobalContext.Provider value={{
         username: username,
         setUsername,

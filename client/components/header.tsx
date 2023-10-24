@@ -1,6 +1,7 @@
 import { classMerge } from "./utils";
-
+/* ----- MEETING HEADER ----- */
 export default function Header() {
+    /* -------- RENDERING ------- */
     return <div //* CONTAINER
         className={classMerge(
             "w-full", //? Sizing

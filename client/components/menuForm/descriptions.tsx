@@ -1,4 +1,5 @@
 export default function Description() {
+    /* -------- RENDERING ------- */
     return <div //* DESCRIPTION
         className="w-full flex flex-col gap-[8px] max-w-min">
         <label //* HEADER 1

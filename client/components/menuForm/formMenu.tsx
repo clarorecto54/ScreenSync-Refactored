@@ -5,10 +5,11 @@ import { useLobby } from "../hooks/useLobby"
 import { classMerge } from "../utils"
 import { v4 } from "uuid"
 export default function FormMenu() {
-    const {
+    /* ----- STATES & HOOKS ----- */
+    const { //* GLOBAL VARIABLE HOOK
         username, setUsername
     } = useGlobals()
-    const {
+    const { //* LOBBY CONTEXT HOOK
         addRoom,
         key, setKey
     } = useLobby()

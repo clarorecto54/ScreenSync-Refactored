@@ -2,7 +2,9 @@ import { LobbyContextProvider } from "@/components/hooks/useLobby";
 import MenuPanel from "@/components/menuPanel";
 import { classMerge } from "@/components/utils";
 import Image from "next/image";
+/* ------ LANDING PAGE ------ */
 export default function Home() {
+  /* -------- RENDERING ------- */
   return <LobbyContextProvider>
     <div //* VIEWPORT
       // "relative h-[100vh] w-[100vw] flex justify-center items-center"

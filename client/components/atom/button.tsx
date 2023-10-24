@@ -60,6 +60,7 @@ interface ButtonProps extends
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
     circle, useIcon, iconSrc, iconOverlay, customOverlay, useNotif, containerClass, textSize, className, children, ...props
 }, ref) => {
+    /* -------- RENDERING ------- */
     return <div //* CONTAINER
         className={classMerge(
             "min-w-max min-h-max", //? Base

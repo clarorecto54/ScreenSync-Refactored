@@ -1,3 +1,4 @@
+"use client"
 import { HTMLAttributes, InputHTMLAttributes, forwardRef } from "react";
 import { cva, VariantProps } from "class-variance-authority"
 import clsx from "clsx";
@@ -83,6 +84,7 @@ interface TextboxProps extends
 const Textbox = forwardRef<HTMLInputElement, TextboxProps>(({
     circle, useIcon, iconSrc, iconOverlay, customOverlay, useSubmit, SubmitSrc, containerClass, iconClass, textSize, className, children, placeholder, ...props
 }, ref) => {
+    /* -------- RENDERING ------- */
     return <div //* CONTAINER
         className={classMerge(
             ContainerVariants({ className: containerClass, textSize }), //? Base Styling
