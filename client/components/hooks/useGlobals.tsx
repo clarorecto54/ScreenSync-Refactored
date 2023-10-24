@@ -1,22 +1,32 @@
 "use client"
-import { ReactNode, createContext, useContext } from "react"
+import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useState } from "react"
 /* -------- INTERFACE ------- */
 interface GlobalProps {
     username: string
+    setUsername: Dispatch<SetStateAction<string>>
     meetingCode: string
+    setMeetingCode: Dispatch<SetStateAction<string>>
 }
 /* --------- CONTEXT -------- */
 const GlobalContext = createContext<GlobalProps>({
     username: "",
-    meetingCode: ""
+    setUsername: () => { },
+    meetingCode: "",
+    setMeetingCode: () => { }
 })
 /* ------- CUSTOM HOOK ------ */
 export function useGlobals() { return useContext(GlobalContext) }
 /* ---- CONTEXT PROVIDER ---- */
 export function GlobalContextProvider({ children }: { children: ReactNode }) {
+    /* ----- STATES & HOOKS ----- */
+    const [username, setUsername] = useState<string>('')
+    const [meetingCode, setMeetingCode] = useState<string>("")
+    /* -------- RENDERING ------- */
     return <GlobalContext.Provider value={{
-        username: "",
-        meetingCode: ""
+        username: username,
+        setUsername,
+        meetingCode: meetingCode,
+        setMeetingCode
     }}>
         {children}
     </GlobalContext.Provider>

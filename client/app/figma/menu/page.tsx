@@ -1,4 +1,4 @@
-import MenuForm from "@/components/menu_form";
+import MenuForm from "@/components/menuForm/formPanel";
 import { classMerge } from "@/components/utils";
 
 export default function MenuPreview() {

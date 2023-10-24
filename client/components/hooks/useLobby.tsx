@@ -1,5 +1,5 @@
 "use client"
-import { createContext, useContext, ReactNode, useEffect, useState } from "react"
+import { createContext, useContext, ReactNode, useEffect, useState, SetStateAction, Dispatch } from "react"
 import { useSocket } from "./useSocket"
 /* -------- INTERFACE ------- */
 interface ParticipantsProps {
@@ -15,11 +15,21 @@ interface RoomInfo {
     participants: ParticipantsProps[]
 }
 interface LobbyProps {
+    searchRoom: string
+    setSearchRoom: Dispatch<SetStateAction<string>>
     roomList: RoomInfo[]
+    addRoom: Dispatch<SetStateAction<RoomInfo[]>>
+    key: string
+    setKey: Dispatch<SetStateAction<string>>
 }
 /* --------- CONTEXT -------- */
 const LobbyContext = createContext<LobbyProps>({
-    roomList: []
+    searchRoom: '',
+    setSearchRoom: () => { },
+    roomList: [],
+    addRoom: () => { },
+    key: '',
+    setKey: () => { }
 })
 /* ------- CUSTOM HOOK ------ */
 export function useLobby() { return useContext(LobbyContext) }
@@ -27,6 +37,9 @@ export function useLobby() { return useContext(LobbyContext) }
 export function LobbyContextProvider({ children }: { children: ReactNode }) {
     /* ----- STATES & HOOKS ----- */
     const { socket } = useSocket()
+    const [searchRoom, setSearchRoom] = useState<string>("")
+    const [roomList, addRoom] = useState<RoomInfo[]>([])
+    const [key, setKey] = useState<string>("")
     /* ------ API HANDLING ------ */
     useEffect(() => {
         //? Socket listeners
@@ -34,14 +47,11 @@ export function LobbyContextProvider({ children }: { children: ReactNode }) {
             //? Turn off the socket listeners
         }
     }, [socket])
+    /* -------- PROVIDER -------- */
     return <LobbyContext.Provider value={{
-        roomList: [{
-            hostname: "Claro",
-            hostID: "test",
-            meetingCode: "testmeeting",
-            meetingKey: "",
-            participants: [{ name: "Claro", socketID: "test", IPv4: "192.168.2.49" }]
-        }]
+        searchRoom: searchRoom, setSearchRoom,
+        roomList: roomList, addRoom,
+        key: key, setKey
     }}>
         {children}
     </LobbyContext.Provider>
