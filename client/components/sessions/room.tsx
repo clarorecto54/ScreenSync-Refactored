@@ -2,6 +2,7 @@
 import Textbox from "../atom/textbox";
 import { classMerge } from "../utils";
 import { useState } from "react"
+import Image from "next/image";
 export default function Room({ //* ARGS
     hostID,
     hostname,
@@ -36,7 +37,14 @@ export default function Room({ //* ARGS
             "transition-all duration-200", //? Animation
         )}>
         <label //* HOSTNAME
-            className="text-[14px] font-[600] hover:cursor-pointer">{hostname}</label>
+            className="text-[14px] font-[600] hover:cursor-pointer flex gap-[8px] justify-center items-center">{hostname}
+            {meetingKey && <div //* LOCKED SESSION ICON CONTAINER
+                className="relative h-[10px] aspect-square">
+                <Image //* LOCKED SESSION ICON
+                    src="/[Icons] Lock.png"
+                    alt=""
+                    fill />
+            </div>}</label>
         <label //* MEETING CODE
             className="text-[10px] italic hover:cursor-pointer">{meetingCode}</label>
         <label //* COUNT OF PARTICIPANTS
