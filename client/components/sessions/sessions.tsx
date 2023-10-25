@@ -36,7 +36,7 @@ export default function SessionsPanel() {
             {roomList.map(({ //* ROOM INFO
                 hostID, hostname, meetingCode, meetingKey, participants
             }, roomIndex) => {
-                if (hostname.includes(searchRoom) || meetingCode.includes(searchRoom)) {
+                if (hostname.toUpperCase().includes(searchRoom.toUpperCase()) || meetingCode.toUpperCase().includes(searchRoom.toUpperCase())) {
                     return <Room
                         key={roomIndex}
                         hostID={hostID}
