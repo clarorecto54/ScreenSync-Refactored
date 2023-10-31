@@ -2,6 +2,8 @@
 import { createServer } from "http"
 import { Server } from "socket.io"
 import { writeFileSync } from "fs"
+import RoomSystem from "./systems/room"
+import { RoomInfo } from "./typings/room.typings"
 const os = require("os")
 
 /* ------- SERVER INIT ------ */
@@ -11,8 +13,17 @@ const io = new Server(httpServer, { cors: { origin: "*" } });
 /* ---- GET TIME FUNCTION --- */
 function TimeLog(seconds?: boolean) { return new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: seconds ? "2-digit" : undefined }) }
 
+/* ------- SERVER DATA ------ */
+var RoomList: RoomInfo[] = []
+
 /* ------ API HANDLING ------ */
 io.on("connection", (socket) => {
+    //* ROOM SYSTEM
+    RoomSystem(io, socket, RoomList)
+    //* GET CLIENT IP
+    socket.on("req-address", () => {
+        io.to(socket.id).emit("my-address", socket.handshake.address.toString())
+    })
     //* CLIENT DISCONNECTION
     socket.on("disconnect", () => {
         //? LOGS ( DISCONNECT )
@@ -23,7 +34,6 @@ io.on("connection", (socket) => {
     //? LOGS ( CONNECT )
     console.clear()
     console.log(`[ ${TimeLog(true)} ][ SERVER ] Total Clients: ${io.sockets.adapter.rooms.size}`) //? Total clients
-
 });
 
 /* -------- PORT & IP ------- */
