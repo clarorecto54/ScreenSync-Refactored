@@ -1,27 +1,7 @@
 "use client"
 import { createContext, useContext, ReactNode, useEffect, useState, SetStateAction, Dispatch } from "react"
 import { useSocket } from "./useSocket"
-/* -------- INTERFACE ------- */
-export interface ParticipantsProps {
-    name: string
-    socketID: string
-    IPv4: string
-}
-export interface RoomInfo {
-    hostname: string
-    hostID: string
-    meetingCode: string
-    meetingKey: string
-    participants: ParticipantsProps[]
-}
-interface LobbyProps {
-    searchRoom: string
-    setSearchRoom: Dispatch<SetStateAction<string>>
-    roomList: RoomInfo[]
-    setRoomList: Dispatch<SetStateAction<RoomInfo[]>>
-    key: string
-    setKey: Dispatch<SetStateAction<string>>
-}
+import { LobbyProps, RoomInfo } from "@/types/lobby.types"
 /* --------- CONTEXT -------- */
 const LobbyContext = createContext<LobbyProps>({
     searchRoom: '',
@@ -36,18 +16,19 @@ export function useLobby() { return useContext(LobbyContext) }
 /* ---- CONTEXT PROVIDER ---- */
 export function LobbyContextProvider({ children }: { children: ReactNode }) {
     /* ----- STATES & HOOKS ----- */
-    const { socket } = useSocket()
+    const { socket, socketID } = useSocket()
     const [searchRoom, setSearchRoom] = useState<string>("")
     const [roomList, setRoomList] = useState<RoomInfo[]>([])
     const [key, setKey] = useState<string>("")
     /* ------ API HANDLING ------ */
     useEffect(() => {
-        //? Socket listeners
+        //* EMIT (REQUEST)
+        socket?.emit("get-room-list")
+        //* ON (RESPONSE)
         socket?.on("updated-room-list", (newRoomList: RoomInfo[]) => {
             setRoomList(newRoomList)
-            console.log(`Updated Room List: ${newRoomList}`)
         })
-    }, [socket])
+    }, [socket, socketID])
     /* -------- PROVIDER -------- */
     return <LobbyContext.Provider value={{
         searchRoom: searchRoom, setSearchRoom,

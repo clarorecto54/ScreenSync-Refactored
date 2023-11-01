@@ -1,7 +1,7 @@
 "use client"
 import { useGlobals } from "./hooks/useGlobals";
 import { useLobby } from "./hooks/useLobby";
-import FormPanel from "./menuForm/formPanel";
+import FormPanel from "./formMenu/formPanel";
 import SessionsPanel from "./sessions/sessions";
 import { classMerge } from "./utils";
 /* - PANELS IN LANDING PAGE - */

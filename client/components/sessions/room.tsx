@@ -3,6 +3,8 @@ import Textbox from "../atom/textbox";
 import { classMerge } from "../utils";
 import { useState } from "react"
 import Image from "next/image";
+import { useGlobals } from "../hooks/useGlobals";
+import { useSocket } from "../hooks/useSocket";
 export default function Room({ //* ARGS
     hostID,
     hostname,
@@ -17,6 +19,10 @@ export default function Room({ //* ARGS
     participants: number,
 }) {
     /* ----- STATES & HOOKS ----- */
+    const {
+        username, setMeetingCode
+    } = useGlobals()
+    const { socket } = useSocket()
     const [showInput, setShowInput] = useState<boolean>(false) //? Key input visibility
     const [key, setKey] = useState<string>("") //? Key input value
     const [isWrongKey, alertWrongKey] = useState<boolean>(false)
@@ -27,7 +33,8 @@ export default function Room({ //* ARGS
                 setShowInput(!showInput)
             }
             else { //? If there are no meeting key user will join the room immediately
-                console.log("You have entered the room")
+                setMeetingCode(meetingCode)
+                socket?.emit("join-room", username, meetingCode)
             }
         }}
         className={classMerge(
@@ -55,10 +62,9 @@ export default function Room({ //* ARGS
             onSubmit={(thisElement) => {
                 thisElement.preventDefault()
                 if (meetingKey === key) {
-                    // TODO EVENT AFTER THE PASSWORD IS CORRECT
-                    //? Create a room based on the room info
+                    setMeetingCode(meetingCode)
+                    socket?.emit("join-room", username, meetingCode)
                     alertWrongKey(false)
-                    console.log("passcode is correct")
                 }
                 else { //? Turn the input border to red if the key is wrong
                     alertWrongKey(true)
@@ -69,7 +75,7 @@ export default function Room({ //* ARGS
                 showInput ? "h-full" : "h-0", //? Conditional
             )}>
             {showInput && <Textbox //* PASSCODE INPUT
-                autoFocus maxLength={32}
+                autoFocus password maxLength={32}
                 useIcon iconSrc="/[Icons] Key.png"
                 textSize={"small"} placeholder="Put the key here"
                 onChange={(thisElement) => {

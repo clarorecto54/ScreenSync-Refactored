@@ -71,6 +71,7 @@ interface TextboxProps extends
     VariantProps<typeof TextboxVariants>,
     VariantProps<typeof IconContainerVariants> {
     circle?: boolean //? Rounded Corners
+    password?: boolean //? Password type
     useIcon?: boolean //? Icon
     iconSrc?: string //? Icon Path
     iconOverlay?: boolean //? Icon Overlay
@@ -82,7 +83,7 @@ interface TextboxProps extends
 }
 /* -------- COMPONENT ------- */
 const Textbox = forwardRef<HTMLInputElement, TextboxProps>(({
-    circle, useIcon, iconSrc, iconOverlay, customOverlay, useSubmit, SubmitSrc, containerClass, iconClass, textSize, className, children, placeholder, ...props
+    circle, password, useIcon, iconSrc, iconOverlay, customOverlay, useSubmit, SubmitSrc, containerClass, iconClass, textSize, className, children, placeholder, ...props
 }, ref) => {
     /* -------- RENDERING ------- */
     return <div //* CONTAINER
@@ -108,7 +109,7 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(({
             </div>
         </div>}
         <input //* TEXTBOX
-            ref={ref} {...props} type="text"
+            ref={ref} {...props} type={password ? "password" : "text"}
             placeholder={placeholder ? placeholder : "Put your text here"}
             className={classMerge(
                 TextboxVariants({ className, textSize }), //? Base Styling

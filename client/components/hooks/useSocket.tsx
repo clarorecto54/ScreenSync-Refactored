@@ -1,13 +1,7 @@
 "use client"
+import { SocketProps } from "@/types/socket.types";
 import { ReactNode, createContext, useEffect, useState, useContext } from "react";
 import { Socket, io } from "socket.io-client"
-/* -------- INTERFACE ------- */
-interface SocketProps {
-    socket: Socket | null //? Socket IO Instance
-    socketID: string
-    IPv4: string
-    isConnected: boolean //? Server Status
-}
 /* --------- CONTEXT -------- */
 const SocketContext = createContext<SocketProps>({
     //* DEFAULT VALUES

@@ -1,12 +1,6 @@
 "use client"
-import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useState } from "react"
-/* -------- INTERFACE ------- */
-interface GlobalProps {
-    username: string
-    setUsername: Dispatch<SetStateAction<string>>
-    meetingCode: string
-    setMeetingCode: Dispatch<SetStateAction<string>>
-}
+import { GlobalProps } from "@/types/globals.types"
+import { ReactNode, createContext, useContext, useState } from "react"
 /* --------- CONTEXT -------- */
 const GlobalContext = createContext<GlobalProps>({
     username: "",

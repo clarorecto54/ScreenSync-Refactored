@@ -5,18 +5,27 @@ import { useLobby } from "../hooks/useLobby"
 import { useSocket } from "../hooks/useSocket"
 import { classMerge } from "../utils"
 import { v4 } from "uuid"
-import { RoomInfo } from "../hooks/useLobby"
+import { RoomInfo } from "@/types/lobby.types"
+import { redirect, RedirectType } from "next/navigation"
+import { useEffect } from "react"
 export default function FormMenu() {
     /* ----- STATES & HOOKS ----- */
     const { //* GLOBAL VARIABLE HOOK
-        username, setUsername
+        username, setUsername,
+        meetingCode, setMeetingCode
     } = useGlobals()
     const { //* LOBBY CONTEXT HOOK
         key, setKey
     } = useLobby()
     const { //* SOCKET CONTEXT HOOK
-        socket, socketID, IPv4
+        socket, socketID, IPv4, isConnected
     } = useSocket()
+    /* ----- EVENT HANDLING ----- */
+    useEffect(() => {
+        if (username.length > 3 && meetingCode && isConnected) {
+            redirect(`/${meetingCode}`, RedirectType.replace) //? Redirect client to the meeting based on the info
+        }
+    }, [username, meetingCode, isConnected])
     /* -------- RENDERING ------- */
     return <form //* FORM
         className="h-full w-full px-[16px] flex flex-col gap-[16px]"
@@ -33,6 +42,7 @@ export default function FormMenu() {
                     setUsername(thisElement.target.value)
                 }} />
             {username.length > 3 && <Textbox //* MEETING PASSCODE
+                password
                 useIcon iconSrc="/[Icons] Key.png"
                 textSize={"small"} maxLength={32} value={key}
                 placeholder="Session key here"
@@ -46,10 +56,11 @@ export default function FormMenu() {
                 useIcon iconSrc="/[Icon] Join.png" iconOverlay
                 textSize={"small"} type="submit"
                 onClick={() => {
+                    const generatedCode = v4()
                     const data: RoomInfo = { //? Starting the meeting
                         hostID: socketID,
                         hostname: username,
-                        meetingCode: v4(),
+                        meetingCode: generatedCode,
                         meetingKey: key,
                         participants: [{
                             IPv4: IPv4,
@@ -58,7 +69,7 @@ export default function FormMenu() {
                         }]
                     }
                     socket?.emit("create-meeting", data)
-                    // TODO REDIRECT THE CLIENT TO THE SESSION
+                    setMeetingCode(generatedCode)
                 }}
                 className={classMerge(
                     "font-[600]", //? Font Styling

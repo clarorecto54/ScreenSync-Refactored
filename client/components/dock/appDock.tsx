@@ -1,3 +1,4 @@
+"use client"
 import Button from "../atom/button";
 import { classMerge } from "../utils";
 import Dock from "./dock";
