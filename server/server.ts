@@ -37,6 +37,7 @@ io.on("connection", (socket) => {
     })
     //* CLIENT CONNECTION
     NoEmptyRoom() //? Clears up empty rooms on every connection
+    console.log(typeof io.of("/").sockets)
     MainLog()
     /* -------- MAIN API -------- */
     //* TEST

@@ -54,6 +54,12 @@ body {
 }
 
 /* ----- CUSTOM STYLINGS ---- */
+.debugging {
+  border: 1px;
+  border-color: red;
+  border-style: solid;
+}
+
 .Unselectable {
   user-select: none;
   -moz-user-select: none;
