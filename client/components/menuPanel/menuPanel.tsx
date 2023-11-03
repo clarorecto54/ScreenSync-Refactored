@@ -1,9 +1,9 @@
 "use client"
-import { useGlobals } from "./hooks/useGlobals";
-import { useLobby } from "./hooks/useLobby";
+import { useGlobals } from "../hooks/useGlobals";
+import { useLobby } from "../hooks/useLobby";
 import FormPanel from "./formMenu/formPanel";
 import SessionsPanel from "./sessions/sessions";
-import { classMerge } from "./utils";
+import { classMerge } from "../utils";
 /* - PANELS IN LANDING PAGE - */
 export default function MenuPanel() {
     /* ----- STATES & HOOKS ----- */

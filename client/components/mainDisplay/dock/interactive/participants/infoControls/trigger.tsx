@@ -4,9 +4,7 @@ import { ParticipantsProps } from "@/types/lobby.types";
 import { useEffect, useRef, useState } from "react";
 import InfoControlsPopup from "./popup";
 
-export default function InfoControlsTrigger({
-    IPv4, name, socketID
-}: ParticipantsProps) {
+export default function InfoControlsTrigger({ data }: { data: ParticipantsProps }) {
     /* ----- STATES & HOOKS ----- */
     const triggerRef = useRef<HTMLDivElement>(null)
     const [refHeight, setRefHeight] = useState<number>(0)
@@ -23,7 +21,7 @@ export default function InfoControlsTrigger({
             "w-full pr-[8px]", //? Sizing
             "flex justify-between items-center group", //? Display
         )}>
-        <label className="w-full break-words text-[16px]">{name}</label>
+        <label className="w-full break-words text-[16px]">{data.name}</label>
         <div //* TRIGGER CONTAINER
             className="flex justify-center items-end">
             <div //* TRIGGER REF
@@ -42,7 +40,7 @@ export default function InfoControlsTrigger({
                 style={{
                     translate: `0 -${refHeight + (16 + 8)}px`
                 }}>
-                <InfoControlsPopup socketID={socketID} />
+                <InfoControlsPopup socketID={data.socketID} />
             </div>}
         </div>
     </div>

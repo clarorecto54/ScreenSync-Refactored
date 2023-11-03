@@ -1,5 +1,5 @@
 "use client"
-import MenuForm from "@/components/formMenu/formPanel";
+import MenuForm from "@/components/menuPanel/formMenu/formPanel";
 import { classMerge } from "@/components/utils";
 export default function MenuPreview() {
     return <div //* VIEWPORT

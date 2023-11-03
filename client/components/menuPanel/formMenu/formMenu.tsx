@@ -1,9 +1,9 @@
-import Button from "../atom/button"
-import Textbox from "../atom/textbox"
-import { useGlobals } from "../hooks/useGlobals"
-import { useLobby } from "../hooks/useLobby"
-import { useSocket } from "../hooks/useSocket"
-import { classMerge } from "../utils"
+import Button from "../../atom/button"
+import Textbox from "../../atom/textbox"
+import { useGlobals } from "../../hooks/useGlobals"
+import { useLobby } from "../../hooks/useLobby"
+import { useSocket } from "../../hooks/useSocket"
+import { classMerge } from "../../utils"
 import { v4 } from "uuid"
 import { RoomInfo } from "@/types/lobby.types"
 import { redirect, RedirectType } from "next/navigation"
@@ -66,7 +66,8 @@ export default function FormMenu() {
                             IPv4: IPv4,
                             name: username,
                             socketID: socketID
-                        }]
+                        }],
+                        chatLog: []
                     }
                     socket?.emit("create-meeting", data)
                     setMeetingCode(generatedCode)

@@ -9,4 +9,11 @@ export interface RoomInfo {
     meetingCode: string
     meetingKey: string
     participants: ParticipantsProps[]
+    chatLog: MessageProps[]
+}
+export interface MessageProps {
+    sender: string
+    senderID: string
+    time: string
+    message: string | string[]
 }

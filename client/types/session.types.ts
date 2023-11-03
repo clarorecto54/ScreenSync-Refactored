@@ -5,10 +5,19 @@ import { ParticipantsProps } from "./lobby.types"
 export interface SessionProps {
     isHost: boolean
     participantList: ParticipantsProps[]
-    mutedList: string[],
+    mutedList: string[]
     setMutedList: Dispatch<SetStateAction<string[]>>
+    chatLog: MessageProps[]
     isStreaming: boolean
-    setIsStreaming: Dispatch<SetStateAction<boolean>>,
+    setIsStreaming: Dispatch<SetStateAction<boolean>>
     isAnnotating: boolean
     setIsAnnotating: Dispatch<SetStateAction<boolean>>
+    activePopup: string
+    setActivePopup: Dispatch<SetStateAction<string>>
+}
+export interface MessageProps {
+    sender: string
+    senderID: string
+    time: string
+    message: string | string[]
 }

@@ -1,6 +1,6 @@
-import Textbox from "../atom/textbox";
-import { useLobby } from "../hooks/useLobby";
-import { classMerge } from "../utils";
+import Textbox from "../../atom/textbox";
+import { useLobby } from "../../hooks/useLobby";
+import { classMerge } from "../../utils";
 import Room from "./room";
 
 export default function SessionsPanel() {

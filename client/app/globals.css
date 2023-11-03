@@ -54,10 +54,22 @@ body {
 }
 
 /* ----- CUSTOM STYLINGS ---- */
-.debugging {
-  border: 1px;
+.debug1,
+.debug2,
+.debug3 {
+  border: 1px solid;
+}
+
+.debug1 {
   border-color: red;
-  border-style: solid;
+}
+
+.debug2 {
+  border-color: green;
+}
+
+.debug3 {
+  border-color: blue;
 }
 
 .Unselectable {

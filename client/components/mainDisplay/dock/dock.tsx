@@ -1,9 +1,9 @@
-import { classMerge } from "../utils"
-import Button from "../atom/button"
-import { useGlobals } from "../hooks/useGlobals"
-import { useSocket } from "../hooks/useSocket"
+import { classMerge } from "@/components/utils"
 import { useEffect, useState } from "react"
 import { redirect, RedirectType } from "next/navigation"
+import Button from "@/components/atom/button"
+import { useGlobals } from "@/components/hooks/useGlobals"
+import { useSocket } from "@/components/hooks/useSocket"
 /* ----- MAIN FUNCTIONS ----- */
 export default function Dock() {
     /* ----- STATES & HOOKS ----- */

@@ -1,4 +1,4 @@
-import { classMerge } from "./utils";
+import { classMerge } from "../utils";
 /* ----- MEETING HEADER ----- */
 export default function Header() {
     /* -------- RENDERING ------- */

@@ -1,5 +1,5 @@
 import { LobbyContextProvider } from "@/components/hooks/useLobby";
-import MenuPanel from "@/components/menuPanel";
+import MenuPanel from "@/components/menuPanel/menuPanel";
 import { classMerge } from "@/components/utils";
 import Image from "next/image";
 /* ------ LANDING PAGE ------ */

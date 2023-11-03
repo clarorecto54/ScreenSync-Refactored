@@ -1,4 +1,4 @@
-import { classMerge } from "../utils";
+import { classMerge } from "../../utils";
 import Logo from "./logo";
 import Description from "./descriptions";
 import FormMenu from "./formMenu";

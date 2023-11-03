@@ -1,6 +1,6 @@
-import { useSocket } from "../hooks/useSocket"
+import { useSocket } from "../../hooks/useSocket"
 import Image from "next/image"
-import { classMerge } from "../utils"
+import { classMerge } from "../../utils"
 export default function Logo() {
     const socket = useSocket()
     return <div //* LOGO & APP NAME

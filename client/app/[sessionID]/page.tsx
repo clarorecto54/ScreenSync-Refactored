@@ -1,6 +1,6 @@
-import MainDisplay from "@/components/mainDisplay/mainDisplay";
-import AppDock from "@/components/dock/appDock";
-import Header from "@/components/header";
+import MainDisplay from "@/components/mainDisplay/display/mainDisplay";
+import AppDock from "@/components/mainDisplay/dock/appDock";
+import Header from "@/components/mainDisplay/header";
 import { SessionContextProvider } from "@/components/hooks/useSession";
 import { classMerge } from "@/components/utils";
 /* ------ MEETING PAGE ------ */

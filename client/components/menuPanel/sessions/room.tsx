@@ -1,10 +1,10 @@
 "use client"
-import Textbox from "../atom/textbox";
-import { classMerge } from "../utils";
+import Textbox from "../../atom/textbox";
+import { classMerge } from "../../utils";
 import { useState } from "react"
 import Image from "next/image";
-import { useGlobals } from "../hooks/useGlobals";
-import { useSocket } from "../hooks/useSocket";
+import { useGlobals } from "../../hooks/useGlobals";
+import { useSocket } from "../../hooks/useSocket";
 export default function Room({ //* ARGS
     hostID,
     hostname,

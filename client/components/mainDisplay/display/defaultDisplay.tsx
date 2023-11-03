@@ -1,4 +1,4 @@
-import { classMerge } from "../utils";
+import { classMerge } from "@/components/utils";
 import Image from "next/image";
 /* ----- DEFAULT DISPLAY ---- */
 export default function DefaultDisplay() {

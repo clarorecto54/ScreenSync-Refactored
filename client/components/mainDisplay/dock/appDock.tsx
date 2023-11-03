@@ -1,6 +1,6 @@
 "use client"
-import Button from "../atom/button";
-import { classMerge } from "../utils";
+import Button from "@/components/atom/button";
+import { classMerge } from "@/components/utils";
 import Dock from "./dock";
 import Interactive from "./interactive";
 /* ------ MAIN APP DOCK ----- */

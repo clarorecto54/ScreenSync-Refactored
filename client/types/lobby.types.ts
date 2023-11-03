@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react"
+import { MessageProps } from "./session.types"
 
 /* -------- INTERFACE ------- */
 export interface ParticipantsProps {
@@ -12,6 +13,7 @@ export interface RoomInfo {
     meetingCode: string
     meetingKey: string
     participants: ParticipantsProps[]
+    chatLog: MessageProps[]
 }
 export interface LobbyProps {
     searchRoom: string

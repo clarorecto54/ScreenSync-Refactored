@@ -1,6 +1,6 @@
 "use client"
-import { useSession } from "../hooks/useSession";
-import { classMerge } from "../utils";
+import { useSession } from "@/components/hooks/useSession";
+import { classMerge } from "@/components/utils";
 import DefaultDisplay from "./defaultDisplay";
 export default function MainDisplay() {
     /* ----- STATES & HOOKS ----- */

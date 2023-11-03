@@ -2,7 +2,7 @@ import { classMerge } from "@/components/utils";
 import InfoControlsTrigger from "./infoControls/trigger";
 import Textbox from "@/components/atom/textbox";
 import { useSession } from "@/components/hooks/useSession";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function ParticipantsPopup() {
     /* ----- STATES & HOOKS ----- */
@@ -32,10 +32,8 @@ export default function ParticipantsPopup() {
             {participantList.map((client, index) => {
                 if (client.name.toUpperCase().includes(search.toUpperCase())) {
                     return <InfoControlsTrigger
-                        key={index}
-                        IPv4={client.IPv4}
-                        name={client.name}
-                        socketID={client.socketID} />
+                        data={client}
+                        key={index} />
                 }
             })}
         </div>

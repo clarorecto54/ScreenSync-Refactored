@@ -1,5 +1,5 @@
 "use client"
-import { SessionProps } from "@/types/session.types"
+import { MessageProps, SessionProps } from "@/types/session.types"
 import { ReactNode, createContext, useContext, useEffect, useState } from "react"
 import { useGlobals } from "./useGlobals"
 import { redirect, RedirectType } from "next/navigation"
@@ -11,10 +11,13 @@ const SessionContext = createContext<SessionProps>({
     participantList: [],
     mutedList: [],
     setMutedList: () => { },
+    chatLog: [],
     isStreaming: false,
     setIsStreaming: () => { },
     isAnnotating: false,
-    setIsAnnotating: () => { }
+    setIsAnnotating: () => { },
+    activePopup: "",
+    setActivePopup: () => { }
 })
 /* ------- CUSTOM HOOK ------ */
 export function useSession() { return useContext(SessionContext) }
@@ -25,26 +28,13 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         username, setUsername,
         meetingCode, setMeetingCode
     } = useGlobals()
-    const [isHost, setIsHost] = useState<boolean>(false)
-    const [participantList, setParticipantList] = useState<ParticipantsProps[]>([
-        { IPv4: "192.168.2.49", name: "Claro Recto", socketID: "eawfwefawf" },
-        { IPv4: "192.168.2.49", name: "Sheila Mae Carmen", socketID: "asdfzxcfzd" },
-        { IPv4: "192.168.2.49", name: "Claro Recto", socketID: "awefawyttghfg" },
-        { IPv4: "192.168.2.49", name: "Sheila Mae Carmen", socketID: "zdxfaefawefad" },
-        { IPv4: "192.168.2.49", name: "Claro Recto", socketID: "aedawefadfxcf" },
-        { IPv4: "192.168.2.49", name: "Sheila Mae Carmen", socketID: "efaetdfgcfg" },
-        { IPv4: "192.168.2.49", name: "Claro Recto", socketID: "adfaweffhch" },
-        { IPv4: "192.168.2.49", name: "Sheila Mae Carmen", socketID: "aewfadfawefawfxxx" },
-        { IPv4: "192.168.2.49", name: "Claro Recto", socketID: "awefawefsdfxcccvd" },
-        { IPv4: "192.168.2.49", name: "Sheila Mae Carmen", socketID: "rgtyhdrtyuydfghdf" },
-        { IPv4: "192.168.2.49", name: "Claro Recto", socketID: "wr2345hjbjb" },
-        { IPv4: "192.168.2.49", name: "Sheila Mae Carmen", socketID: "cfaery86768" },
-        { IPv4: "192.168.2.49", name: "Claro Recto", socketID: ",kjmghjthr" },
-        { IPv4: "192.168.2.49", name: "Sheila Mae Carmen", socketID: "56457sgsdf" }
-    ])
+    const [isHost, setIsHost] = useState<boolean>(false) // TODO HOST AUTH
+    const [participantList, setParticipantList] = useState<ParticipantsProps[]>([]) // TODO VIEWERS BACKEND
     const [mutedList, setMutedList] = useState<string[]>([])
+    const [chatLog, setChatLog] = useState<MessageProps[]>([]) // TODO CHAT LOG BACKEND
     const [isStreaming, setIsStreaming] = useState<boolean>(false)
     const [isAnnotating, setIsAnnotating] = useState<boolean>(false)
+    const [activePopup, setActivePopup] = useState<string>("")
     /* ---- SESSION VALIDATOR --- */
     useEffect(() => {
         // TODO [SERVER] ALWAYS CHECK CONNECTION AND DISCONNECT FOR LIST OF CLIENTS AND VALIDATE THE PARTICIPANT LIST OF EACH ROOM
@@ -59,8 +49,10 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         isHost: isHost,
         participantList: participantList,
         mutedList: mutedList, setMutedList,
+        chatLog: chatLog,
         isStreaming: isStreaming, setIsStreaming,
-        isAnnotating: isAnnotating, setIsAnnotating
+        isAnnotating: isAnnotating, setIsAnnotating,
+        activePopup: activePopup, setActivePopup
     }}>
         {children}
     </SessionContext.Provider>
