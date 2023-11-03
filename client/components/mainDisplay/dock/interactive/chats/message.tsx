@@ -22,7 +22,7 @@ export default function Message({ data }: { data: MessageProps }) {
             <label className=" text-[10px] font-[400]">{data.time}</label>
         </div>
         <div //* MESSAGES
-            className="flex flex-col">
+            className="flex flex-col gap-[8px]">
             {typeof data.message === "string" && <label //* SINGLE MESSAGE
                 className={classMerge(
                     "text-[14px]", //? Base Styling

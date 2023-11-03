@@ -1,12 +1,16 @@
 import Textbox from "@/components/atom/textbox"
-import { useSession } from "@/components/hooks/useSession"
 import { classMerge } from "@/components/utils"
 import { useRef, useState } from "react"
+import { useSocket } from "@/components/hooks/useSocket"
+import { useGlobals } from "@/components/hooks/useGlobals"
 import Message from "./message"
+import { useSession } from "@/components/hooks/useSession"
 
 export default function ChatsPopup() {
     /* ----- STATES & HOOKS ----- */
+    const { socket } = useSocket()
     const { chatLog } = useSession()
+    const { username, meetingCode } = useGlobals()
     const inputRef = useRef<HTMLInputElement>(null)
     const [message, setMessage] = useState<string>("")
     /* -------- RENDERING ------- */
@@ -22,19 +26,19 @@ export default function ChatsPopup() {
         <div //* MESSAGE LIST
             className={classMerge(
                 "h-full w-full overflow-hidden overflow-y-scroll scroll-smooth", //? Sizing
-                "flex flex-col gap-[16px]", //? Display
+                "flex flex-col-reverse gap-[16px]", //? Display
             )}>
-            {chatLog.map((message, index) => {
+            {chatLog.slice().reverse().map((message, index) => {
                 return <Message
-                    data={message}
-                    key={index} />
+                    key={index}
+                    data={message} />
             })}
         </div>
         <form //* INPUT CONTAINER
             onSubmit={(thisElement) => {
                 thisElement.preventDefault() //? Prevent refreshing the page on submit
                 if (message) {
-                    // TODO Emit the message to the server
+                    socket?.emit("send-message", { username, meetingCode, message })
                     setMessage("")
                     if (inputRef.current) {
                         inputRef.current.focus() //? Textbox will stay on focus after sending a message

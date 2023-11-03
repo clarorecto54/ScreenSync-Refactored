@@ -4,7 +4,7 @@ import { ReactNode, createContext, useContext, useEffect, useState } from "react
 import { useGlobals } from "./useGlobals"
 import { redirect, RedirectType } from "next/navigation"
 import { ParticipantsProps } from "@/types/lobby.types"
-// TODO SESSIONS CHAT & ATTENDANCE SYSTEM
+import { useSocket } from "./useSocket"
 /* --------- CONTEXT -------- */
 const SessionContext = createContext<SessionProps>({
     isHost: false,
@@ -12,18 +12,22 @@ const SessionContext = createContext<SessionProps>({
     mutedList: [],
     setMutedList: () => { },
     chatLog: [],
+    // setChatLog: () => {},
     isStreaming: false,
     setIsStreaming: () => { },
     isAnnotating: false,
     setIsAnnotating: () => { },
     activePopup: "",
-    setActivePopup: () => { }
+    setActivePopup: () => { },
+    newMessage: false,
+    setNewMessage: () => { }
 })
 /* ------- CUSTOM HOOK ------ */
 export function useSession() { return useContext(SessionContext) }
 /* ---- CONTEXT PROVIDER ---- */
 export function SessionContextProvider({ children }: { children: ReactNode }) {
     /* ----- STATES & HOOKS ----- */
+    const { socket } = useSocket()
     const {
         username, setUsername,
         meetingCode, setMeetingCode
@@ -31,10 +35,11 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
     const [isHost, setIsHost] = useState<boolean>(false) // TODO HOST AUTH
     const [participantList, setParticipantList] = useState<ParticipantsProps[]>([]) // TODO VIEWERS BACKEND
     const [mutedList, setMutedList] = useState<string[]>([])
-    const [chatLog, setChatLog] = useState<MessageProps[]>([]) // TODO CHAT LOG BACKEND
+    const [chatLog, setChatLog] = useState<MessageProps[]>([])
     const [isStreaming, setIsStreaming] = useState<boolean>(false)
     const [isAnnotating, setIsAnnotating] = useState<boolean>(false)
     const [activePopup, setActivePopup] = useState<string>("")
+    const [newMessage, setNewMessage] = useState<boolean>(false)
     /* ---- SESSION VALIDATOR --- */
     useEffect(() => {
         // TODO [SERVER] ALWAYS CHECK CONNECTION AND DISCONNECT FOR LIST OF CLIENTS AND VALIDATE THE PARTICIPANT LIST OF EACH ROOM
@@ -44,6 +49,20 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         //     redirect("/", RedirectType.replace) //? Redirect client to the landing page if their credentials are not valid
         // }
     }, [username, setUsername, meetingCode, setMeetingCode])
+    /* ------ API HANDLING ------ */
+    useEffect(() => {
+        //* EMIT (REQUEST)
+        socket?.emit("get-chatLog", meetingCode)
+        //* ON (RESPONSE)
+        socket?.on("updated-chatLog", (data: MessageProps[]) => {
+            setChatLog(data)
+        })
+        socket?.on("new-message", () => {
+            if (activePopup !== "chats") {
+                setNewMessage(true)
+            }
+        })
+    }, [socket, meetingCode, activePopup])
     /* -------- RENDERING ------- */
     return <SessionContext.Provider value={{
         isHost: isHost,
@@ -52,7 +71,8 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         chatLog: chatLog,
         isStreaming: isStreaming, setIsStreaming,
         isAnnotating: isAnnotating, setIsAnnotating,
-        activePopup: activePopup, setActivePopup
+        activePopup: activePopup, setActivePopup,
+        newMessage: newMessage, setNewMessage
     }}>
         {children}
     </SessionContext.Provider>

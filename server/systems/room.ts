@@ -7,6 +7,8 @@ function RefreshRoomList() {
     io.local.emit("updated-room-list", RoomList) //? Sends the updated room list into the lobby
     MainLog()
 }
+
+/* ------ MAIN FUNCTION ----- */
 export function RoomSystem(socket: Socket) {
     //* CREATE A MEETING
     socket.on("create-meeting", (newRoom: RoomInfo) => {

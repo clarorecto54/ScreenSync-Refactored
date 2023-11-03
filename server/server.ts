@@ -4,6 +4,7 @@ import { Server } from "socket.io"
 import { writeFileSync } from "fs"
 import { RoomSystem } from "./systems/room"
 import { RoomInfo } from "./typings/room.typings"
+import ChatSystem from "./systems/chat"
 const os = require("os")
 
 /* ------- SERVER INIT ------ */
@@ -37,7 +38,6 @@ io.on("connection", (socket) => {
     })
     //* CLIENT CONNECTION
     NoEmptyRoom() //? Clears up empty rooms on every connection
-    console.log(typeof io.of("/").sockets)
     MainLog()
     /* -------- MAIN API -------- */
     //* TEST
@@ -46,6 +46,8 @@ io.on("connection", (socket) => {
     RoomSystem(socket)
     //* SEND UPDATED ROOMLIST
     socket.on("get-room-list", () => io.local.emit("updated-room-list", RoomList))
+    //* CHAT SYSTEM
+    ChatSystem(socket)
     //* GET CLIENT IP
     socket.on("req-address", () => {
         io.to(socket.id).emit("my-address", socket.handshake.address.toString())

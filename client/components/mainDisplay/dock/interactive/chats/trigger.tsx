@@ -6,7 +6,10 @@ import { useSession } from "@/components/hooks/useSession";
 
 export default function ChatsTrigger() {
     /* ----- STATES & HOOKS ----- */
-    const { activePopup, setActivePopup } = useSession()
+    const {
+        activePopup, setActivePopup,
+        newMessage, setNewMessage
+    } = useSession()
     const triggerRef = useRef<HTMLDivElement>(null)
     const [refHeight, setRefHeight] = useState<number>(0)
     /* ------- REF HANDER ------- */
@@ -23,10 +26,12 @@ export default function ChatsTrigger() {
         <div //* TRIGGER REFERENCE
             ref={triggerRef}>
             <Button //* TRIGGER
+                useNotif={newMessage}
                 circle useIcon iconSrc="/[Icon] Chat.png" iconOverlay
                 onClick={() => {
                     if (activePopup !== "chats") {
                         setActivePopup("chats")
+                        setNewMessage(false)
                     }
                     else { setActivePopup("") }
                 }}
