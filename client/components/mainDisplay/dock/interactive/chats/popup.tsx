@@ -9,7 +9,7 @@ import { useSession } from "@/components/hooks/useSession"
 export default function ChatsPopup() {
     /* ----- STATES & HOOKS ----- */
     const { socket } = useSocket()
-    const { chatLog } = useSession()
+    const { chatLog, mutedList } = useSession()
     const { username, meetingCode } = useGlobals()
     const inputRef = useRef<HTMLInputElement>(null)
     const [message, setMessage] = useState<string>("")
@@ -29,9 +29,11 @@ export default function ChatsPopup() {
                 "flex flex-col-reverse gap-[16px]", //? Display
             )}>
             {chatLog.slice().reverse().map((message, index) => {
-                return <Message
-                    key={index}
-                    data={message} />
+                if (!mutedList.includes(message.senderID)) { //? Filters out muted senders
+                    return <Message
+                        key={index}
+                        data={message} />
+                }
             })}
         </div>
         <form //* INPUT CONTAINER

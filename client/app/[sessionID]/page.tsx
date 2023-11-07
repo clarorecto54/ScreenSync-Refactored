@@ -3,6 +3,8 @@ import AppDock from "@/components/mainDisplay/dock/appDock";
 import Header from "@/components/mainDisplay/header";
 import { SessionContextProvider } from "@/components/hooks/useSession";
 import { classMerge } from "@/components/utils";
+import PanelPopup from "@/components/mainDisplay/popups/panel";
+import ContentPopup from "@/components/mainDisplay/popups/content";
 /* ------ MEETING PAGE ------ */
 export default function SessionPage() {
     /* -------- RENDERING ------- */
@@ -18,5 +20,8 @@ export default function SessionPage() {
             <MainDisplay />
             <AppDock />
         </div>
+        <PanelPopup>
+            < ContentPopup />
+        </PanelPopup>
     </SessionContextProvider>
 }

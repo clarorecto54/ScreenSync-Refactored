@@ -1,14 +1,23 @@
 import Button from "@/components/atom/button";
 import { classMerge } from "@/components/utils";
 import { ParticipantsProps } from "@/types/lobby.types";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import InfoControlsPopup from "./popup";
+import { useSocket } from "@/components/hooks/useSocket";
 
-export default function InfoControlsTrigger({ data }: { data: ParticipantsProps }) {
+export default function InfoControlsTrigger({
+    data,
+    activePopup,
+    setActivePopup
+}: {
+    data: ParticipantsProps,
+    activePopup: string,
+    setActivePopup: Dispatch<SetStateAction<string>>
+}) {
     /* ----- STATES & HOOKS ----- */
+    const { socketID } = useSocket()
     const triggerRef = useRef<HTMLDivElement>(null)
     const [refHeight, setRefHeight] = useState<number>(0)
-    const [showPopup, setShowPopup] = useState<boolean>(false)
     /* ------- REF HANDLER ------ */
     useEffect(() => {
         if (triggerRef.current) {
@@ -21,7 +30,10 @@ export default function InfoControlsTrigger({ data }: { data: ParticipantsProps 
             "w-full pr-[8px]", //? Sizing
             "flex justify-between items-center group", //? Display
         )}>
-        <label className="w-full break-words text-[16px]">{data.name}</label>
+        <label //* PARTICIPANT NAME
+            className="w-full break-words text-[16px]">
+            {socketID === data.socketID ? `${data.name} (You)` : data.name}
+        </label>
         <div //* TRIGGER CONTAINER
             className="flex justify-center items-end">
             <div //* TRIGGER REF
@@ -29,16 +41,21 @@ export default function InfoControlsTrigger({ data }: { data: ParticipantsProps 
                 <Button //* TRIGGER
                     circle textSize={"small"}
                     useIcon iconSrc="/[Icon] 3 Dots.png"
-                    onClick={() => setShowPopup(!showPopup)}
+                    onClick={() => {
+                        if (activePopup === data.socketID) {
+                            setActivePopup("")
+                        } else {
+                            setActivePopup(data.socketID)
+                        }
+                    }}
                     className={classMerge(
                         "bg-transparent opacity-0 hover:bg-[#64646432] group group-hover:opacity-100", //? Background
                     )} />
             </div>
-            {showPopup && <div //* POPUP
-                // TODO SET SHOWPOPUP TO FALSE ON SCROLL
+            {activePopup === data.socketID && <div //* POPUP
                 className="absolute"
                 style={{
-                    translate: `0 -${refHeight + (16 + 8)}px`
+                    translate: `0 -${(refHeight * 0.5) + (16 + 8)}px`
                 }}>
                 <InfoControlsPopup socketID={data.socketID} />
             </div>}

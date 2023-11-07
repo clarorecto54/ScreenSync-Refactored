@@ -5,6 +5,7 @@ import { writeFileSync } from "fs"
 import { RoomSystem } from "./systems/room"
 import { RoomInfo } from "./typings/room.typings"
 import ChatSystem from "./systems/chat"
+import InteractiveSystem from "./systems/interactive"
 const os = require("os")
 
 /* ------- SERVER INIT ------ */
@@ -28,15 +29,27 @@ export function MainLog() {
     console.log(`[ ${TimeLog(true)} ][ SERVER ] Total Clients: ${io.sockets.sockets.size}`) //? Total clients
     console.log(`[ ${TimeLog(true)} ][ SERVER ] Total Rooms: ${RoomList.length}`)
 }
-
+function ClearInactiveSockets() {
+    var activeSockets: string[] = []
+    io.sockets.sockets.forEach(sockets => { //? Get the list of active sockets
+        activeSockets.push(sockets.id)
+    })
+    RoomList.forEach(room => {
+        room.participants = room.participants.filter(participants => { //? Filter out the inactive sockets
+            return activeSockets.includes(participants.socketID)
+        })
+    })
+}
 /* ------ API HANDLING ------ */
 io.on("connection", (socket) => {
     //* CLIENT DISCONNECTION
     socket.on("disconnect", () => {
+        ClearInactiveSockets()
         NoEmptyRoom() //? Clears up empty rooms on every disconnection
         MainLog()
     })
     //* CLIENT CONNECTION
+    ClearInactiveSockets()
     NoEmptyRoom() //? Clears up empty rooms on every connection
     MainLog()
     /* -------- MAIN API -------- */
@@ -44,8 +57,8 @@ io.on("connection", (socket) => {
     socket.on("test", () => { console.log("Test Success") })
     //* ROOM SYSTEM
     RoomSystem(socket)
-    //* SEND UPDATED ROOMLIST
-    socket.on("get-room-list", () => io.local.emit("updated-room-list", RoomList))
+    //* INTERACTIVE SYSTEM
+    InteractiveSystem(socket)
     //* CHAT SYSTEM
     ChatSystem(socket)
     //* GET CLIENT IP
@@ -60,12 +73,12 @@ interface ServerProps { //* INTERFACE
     PORT: number
 }
 const config: ServerProps = { //* PROPS
-    IP: os.networkInterfaces()[Object.keys(os.networkInterfaces())[0]][0].address,
+    IP: os.networkInterfaces()[Object.keys(os.networkInterfaces())[0]][1].address,
     PORT: 3001
 }
 try {
     const props: ServerProps = require("../client/server.json") //? Checks if the server config is existing on the client
-    if (!props.PORT || !props.IP) { throw Error } //? If the server config is not valid it will throw and error
+    if ((!props.PORT || !props.IP) || ((props.PORT !== config.PORT) || (props.IP !== config.IP))) { throw Error } //? If the server config is not valid it will throw and error
 } catch (error) {
     writeFileSync("../client/server.json", JSON.stringify(config, null, 2), "utf-8") //? Export the server config to JSON
 }

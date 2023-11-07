@@ -7,14 +7,24 @@ function RefreshRoomList() {
     io.local.emit("updated-room-list", RoomList) //? Sends the updated room list into the lobby
     MainLog()
 }
-
+/* ------ SUB FUNCTION ------ */
+function SendParticipantList() {
+    RoomList.forEach(room => {
+        io.to(room.meetingCode).emit("updated-participant-list", room.participants)
+    })
+}
 /* ------ MAIN FUNCTION ----- */
 export function RoomSystem(socket: Socket) {
+    //* SEND UPDATED ROOMLIST
+    socket.on("get-room-list", () => io.local.emit("updated-room-list", RoomList))
+    //* SEND UPDATED PARTICIPANT LIST
+    socket.on("get-participant-list", () => SendParticipantList())
     //* CREATE A MEETING
     socket.on("create-meeting", (newRoom: RoomInfo) => {
         RoomList.push(newRoom) //? Adds the new room
         socket.join(newRoom.meetingCode) //? Host will join the newly created room
         RefreshRoomList()
+        SendParticipantList()
         console.log(`[ ${TimeLog(true)} ][ SERVER ][ ROOM ][ ${newRoom.meetingCode} ] has been created by ${newRoom.hostname}`)
     })
     //* JOIN MEETING
@@ -27,9 +37,11 @@ export function RoomSystem(socket: Socket) {
                     name: username,
                     socketID: socket.id
                 })
+                return
             }
         })
         RefreshRoomList()
+        SendParticipantList()
         console.log(`[ ${TimeLog(true)} ][ SERVER ][ ROOM ][ ${meetingCode} ] ${username} joined the room`)
     })
     //* LEAVE MEETING
@@ -43,6 +55,7 @@ export function RoomSystem(socket: Socket) {
         })
         socket.leave(meetingCode) //? Client will leave the room
         RefreshRoomList()
+        SendParticipantList()
         console.log(`[ ${TimeLog(true)} ][ SERVER ][ ROOM ][ ${meetingCode} ] ${username} left the room`)
     })
 }

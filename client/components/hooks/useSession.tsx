@@ -12,7 +12,6 @@ const SessionContext = createContext<SessionProps>({
     mutedList: [],
     setMutedList: () => { },
     chatLog: [],
-    // setChatLog: () => {},
     isStreaming: false,
     setIsStreaming: () => { },
     isAnnotating: false,
@@ -20,49 +19,70 @@ const SessionContext = createContext<SessionProps>({
     activePopup: "",
     setActivePopup: () => { },
     newMessage: false,
-    setNewMessage: () => { }
+    setNewMessage: () => { },
+    clientLeaved: false,
+    setClientLeaved: () => { }
 })
 /* ------- CUSTOM HOOK ------ */
 export function useSession() { return useContext(SessionContext) }
 /* ---- CONTEXT PROVIDER ---- */
 export function SessionContextProvider({ children }: { children: ReactNode }) {
     /* ----- STATES & HOOKS ----- */
-    const { socket } = useSocket()
+    const { socket, socketID } = useSocket()
     const {
         username, setUsername,
         meetingCode, setMeetingCode
     } = useGlobals()
     const [isHost, setIsHost] = useState<boolean>(false) // TODO HOST AUTH
-    const [participantList, setParticipantList] = useState<ParticipantsProps[]>([]) // TODO VIEWERS BACKEND
+    const [participantList, setParticipantList] = useState<ParticipantsProps[]>([])
     const [mutedList, setMutedList] = useState<string[]>([])
     const [chatLog, setChatLog] = useState<MessageProps[]>([])
     const [isStreaming, setIsStreaming] = useState<boolean>(false)
     const [isAnnotating, setIsAnnotating] = useState<boolean>(false)
     const [activePopup, setActivePopup] = useState<string>("")
     const [newMessage, setNewMessage] = useState<boolean>(false)
+    const [clientLeaved, setClientLeaved] = useState<boolean>(false)
     /* ---- SESSION VALIDATOR --- */
     useEffect(() => {
-        // TODO [SERVER] ALWAYS CHECK CONNECTION AND DISCONNECT FOR LIST OF CLIENTS AND VALIDATE THE PARTICIPANT LIST OF EACH ROOM
-        // if (!username || username.length < 4 || !meetingCode || (meetingCode !== window.location.pathname.replace("/", ""))) {
-        //     setUsername("") //? Clear out client fake info
-        //     setMeetingCode("") //? Clear out client fake info
-        //     redirect("/", RedirectType.replace) //? Redirect client to the landing page if their credentials are not valid
-        // }
+        if (!username || username.length < 4 || !meetingCode || (meetingCode !== window.location.pathname.replace("/", ""))) {
+            setUsername("") //? Clear out client fake info
+            setMeetingCode("") //? Clear out client fake info
+            redirect("/", RedirectType.replace) //? Redirect client to the landing page if their credentials are not valid
+        }
     }, [username, setUsername, meetingCode, setMeetingCode])
-    /* ------ API HANDLING ------ */
+    /* -------- ROOM API -------- */
     useEffect(() => {
         //* EMIT (REQUEST)
-        socket?.emit("get-chatLog", meetingCode)
+        socket?.emit("get-chatLog", meetingCode) //? Get room's chat log
+        socket?.emit("get-participant-list") //? Get participant list
         //* ON (RESPONSE)
         socket?.on("updated-chatLog", (data: MessageProps[]) => {
-            setChatLog(data)
+            setChatLog(data) //? Update the chat log from the server's data
         })
         socket?.on("new-message", () => {
             if (activePopup !== "chats") {
-                setNewMessage(true)
+                setNewMessage(true) //? Turns the notification icon of chat trigger
             }
         })
+        socket?.on("updated-participant-list", (data: ParticipantsProps[]) => {
+            setParticipantList(data)
+        })
+        socket?.on("alert-participant", () => {
+            setActivePopup("System Alert")
+        })
+        socket?.on("kick-participant", () => {
+            setActivePopup("System Kick")
+        })
     }, [socket, meetingCode, activePopup])
+    /* ------ EVENT HANDLER ----- */
+    useEffect(() => {
+        if (clientLeaved) {
+            socket?.emit("leave-room", username, meetingCode) //? Leave room from the server
+            setUsername("") //? Clear out client info to get access on the landing page
+            setMeetingCode("") //? Clear out client info to get access on the landing page
+            redirect("/", RedirectType.replace) //? Redirect client to the landing page
+        }
+    }, [clientLeaved, socket, username, meetingCode, setUsername, setMeetingCode])
     /* -------- RENDERING ------- */
     return <SessionContext.Provider value={{
         isHost: isHost,
@@ -72,7 +92,8 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         isStreaming: isStreaming, setIsStreaming,
         isAnnotating: isAnnotating, setIsAnnotating,
         activePopup: activePopup, setActivePopup,
-        newMessage: newMessage, setNewMessage
+        newMessage: newMessage, setNewMessage,
+        clientLeaved: clientLeaved, setClientLeaved
     }}>
         {children}
     </SessionContext.Provider>

@@ -1,27 +1,10 @@
 import { classMerge } from "@/components/utils"
-import { useEffect, useState } from "react"
-import { redirect, RedirectType } from "next/navigation"
 import Button from "@/components/atom/button"
-import { useGlobals } from "@/components/hooks/useGlobals"
-import { useSocket } from "@/components/hooks/useSocket"
+import { useSession } from "@/components/hooks/useSession"
 /* ----- MAIN FUNCTIONS ----- */
 export default function Dock() {
     /* ----- STATES & HOOKS ----- */
-    const {
-        username, setUsername,
-        meetingCode, setMeetingCode
-    } = useGlobals()
-    const { socket } = useSocket()
-    const [clientLeaved, setClientLeaved] = useState<boolean>(false)
-    /* ------ EVENT HANDLER ----- */
-    useEffect(() => {
-        if (clientLeaved) {
-            socket?.emit("leave-room", username, meetingCode) //? Leave room from the server
-            setUsername("") //? Clear out client info to get access on the landing page
-            setMeetingCode("") //? Clear out client info to get access on the landing page
-            redirect("/", RedirectType.replace) //? Redirect client to the landing page
-        }
-    }, [clientLeaved, socket, username, meetingCode, setUsername, setMeetingCode])
+    const { setClientLeaved } = useSession()
     /* -------- RENDERING ------- */
     return <div //* APP DOCK
         className="flex gap-[16px] justify-center items-center">

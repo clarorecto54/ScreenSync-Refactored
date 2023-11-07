@@ -8,7 +8,6 @@ export interface SessionProps {
     mutedList: string[]
     setMutedList: Dispatch<SetStateAction<string[]>>
     chatLog: MessageProps[]
-    // setChatLog: Dispatch<SetStateAction<MessageProps[]>>
     isStreaming: boolean
     setIsStreaming: Dispatch<SetStateAction<boolean>>
     isAnnotating: boolean
@@ -17,6 +16,8 @@ export interface SessionProps {
     setActivePopup: Dispatch<SetStateAction<string>>
     newMessage: boolean
     setNewMessage: Dispatch<SetStateAction<boolean>>
+    clientLeaved: boolean
+    setClientLeaved: Dispatch<SetStateAction<boolean>>
 }
 export interface MessageProps {
     sender: string

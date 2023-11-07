@@ -20,6 +20,7 @@
 		},
 		"[tailwindcss]": {
 			"editor.defaultFormatter": "bradlc.vscode-tailwindcss"
-		}
+		},
+		"todo-tree.tree.scanMode": "workspace only"
 	}
 }

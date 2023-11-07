@@ -18,6 +18,7 @@ export default function ChatSystem(socket: Socket) {
             if (room.meetingCode === meetingCode) { //? Find the specific room
                 SendUpdatedChatLog(meetingCode, room)
                 BroadCastNewMessage(socket, meetingCode)
+                return
             }
         })
     })
@@ -55,6 +56,7 @@ export default function ChatSystem(socket: Socket) {
             if (room.meetingCode === meetingCode) { //? Find the specific room
                 SendUpdatedChatLog(meetingCode, room)
                 BroadCastNewMessage(socket, meetingCode)
+                return
             }
         })
     })

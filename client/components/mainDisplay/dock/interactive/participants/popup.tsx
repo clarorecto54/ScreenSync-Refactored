@@ -8,6 +8,7 @@ export default function ParticipantsPopup() {
     /* ----- STATES & HOOKS ----- */
     const { participantList } = useSession()
     const [search, setSearch] = useState<string>("")
+    const [activePopup, setActivePopup] = useState<string>("")
     /* -------- RENDERING ------- */
     return <div //* CONTAINER
         className={classMerge(
@@ -25,6 +26,9 @@ export default function ParticipantsPopup() {
             containerClass="mb-[8px]"
             onChange={(thisElement) => setSearch(thisElement.target.value)} />
         <div //* PARTICIPANTS LIST
+            onScroll={(thisElement) => {
+                setActivePopup("") //? Close popups
+            }}
             className={classMerge(
                 "h-full w-full overflow-hidden overflow-y-scroll scroll-smooth", //? Sizing
                 "flex flex-col gap-[8px]", //? Display
@@ -33,6 +37,8 @@ export default function ParticipantsPopup() {
                 if (client.name.toUpperCase().includes(search.toUpperCase())) {
                     return <InfoControlsTrigger
                         data={client}
+                        activePopup={activePopup}
+                        setActivePopup={setActivePopup}
                         key={index} />
                 }
             })}
