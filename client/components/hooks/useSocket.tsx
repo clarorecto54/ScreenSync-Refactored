@@ -14,13 +14,20 @@ const SocketContext = createContext<SocketProps>({
 export function useSocket() { return useContext(SocketContext) }
 /* -------- PROVIDER -------- */
 export function SocketProvider({ children }: { children: ReactNode }) {
+    const [server, setServer] = useState<string>("")
     const [socket, setSocket] = useState<Socket | null>(null)
     const [socketID, setSocketID] = useState<string>("")
     const [IPv4, setIPv4] = useState<string>("")
     const [isConnected, setIsConneted] = useState<boolean>(false)
+    /* ----- SOCKET HANDLING ---- */
     useEffect(() => {
-        const server = require("@/server.json") //? Load the server config
-        const socket = io(`http://${server.IP}:${server.PORT}`)
+        fetch("/api/server", {
+            method: "GET",
+            cache: "no-store"
+        }).then(res => res.text()).then(res => {
+            setServer(JSON.parse(res))
+        })
+        const socket = io(server)
         setSocket(socket)
         /* ------ API HANDLING ------ */
         socket.on("connect", () => setIsConneted(true))
@@ -30,7 +37,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         return () => {
             socket.disconnect()
         }
-    }, [])
+    }, [server])
     /* ----- EVENT HANDLING ----- */
     useEffect(() => {
         if (isConnected) {
@@ -38,6 +45,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
             socket?.emit("req-address")
         }
     }, [socket, isConnected])
+    /* -------- RENDERING ------- */
     return <SocketContext.Provider value={{
         socket: socket,
         socketID: socketID,

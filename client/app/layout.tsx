@@ -1,10 +1,10 @@
 import { SocketProvider } from '@/components/hooks/useSocket'
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+// import { Inter } from 'next/font/google'
 import { GlobalContextProvider } from '@/components/hooks/useGlobals'
 
-const inter = Inter({ subsets: ['latin'] })
+// const inter = Inter({ subsets: ['latin'] }) //? This is for google font optimization (Optional)
 
 export const metadata: Metadata = {
   title: 'ScreenSync',
@@ -21,7 +21,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      {/* <body className={inter.className}> */}
+      <body>
         <GlobalContextProvider>
           <SocketProvider>
             {children}

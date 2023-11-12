@@ -72,18 +72,31 @@ interface ServerProps { //* INTERFACE
     IP: string
     PORT: number
 }
+function GETIP() {
+    var IP = "localhost" //? Default IP
+    try {
+        for (var index = 0; index < 4; index++) { //? Find a valid IP
+            const data: string = os.networkInterfaces()[Object.keys(os.networkInterfaces())[index]][0].address
+            if ((data.split(".").length - 1) === 3) {
+                IP = data //? If valid IP found it will return it
+                break
+            }
+        }
+    } catch (error) { console.log("No LAN Detected running on localhost") }
+    return IP
+}
 const config: ServerProps = { //* PROPS
-    IP: os.networkInterfaces()[Object.keys(os.networkInterfaces())[0]][1].address,
+    IP: GETIP(),
     PORT: 3001
 }
 try {
-    const props: ServerProps = require("../client/server.json") //? Checks if the server config is existing on the client
+    const props: ServerProps = require("../client//server.json") //? Checks if the server config is existing on the client
     if ((!props.PORT || !props.IP) || ((props.PORT !== config.PORT) || (props.IP !== config.IP))) { throw Error } //? If the server config is not valid it will throw and error
 } catch (error) {
-    writeFileSync("../client/server.json", JSON.stringify(config, null, 2), "utf-8") //? Export the server config to JSON
+    writeFileSync("../client//server.json", JSON.stringify(config, null, 2), "utf-8") //? Export the server config to JSON
 }
 httpServer.listen(
-    config.PORT, config.IP,
+    3001,
     () => {
         console.clear() //? Clear the log
         console.log(`[ ${TimeLog(true)} ][ SERVER RUNNING ] http://${config.IP}:${config.PORT}`)
