@@ -5,6 +5,7 @@ import { useGlobals } from "./useGlobals"
 import { redirect, RedirectType } from "next/navigation"
 import { ParticipantsProps } from "@/types/lobby.types"
 import { useSocket } from "./useSocket"
+import { Peer } from "peerjs"
 /* --------- CONTEXT -------- */
 const SessionContext = createContext<SessionProps>({
     isHost: false,
@@ -29,6 +30,7 @@ export function useSession() { return useContext(SessionContext) }
 export function SessionContextProvider({ children }: { children: ReactNode }) {
     /* ----- STATES & HOOKS ----- */
     const { socket, socketID } = useSocket()
+    const [peer, setPeer] = useState<Peer>()
     const {
         username, setUsername,
         meetingCode, setMeetingCode
@@ -50,7 +52,27 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
             redirect("/", RedirectType.replace) //? Redirect client to the landing page if their credentials are not valid
         }
     }, [username, setUsername, meetingCode, setMeetingCode])
-    /* -------- ROOM API -------- */
+    /* ------ PEER HANDLING ----- */
+    useEffect(() => {
+        //* PEER INITIALIZATION
+        fetch("/api/server", {
+            method: "GET",
+            cache: "no-store"
+        }).then(res => res.text()).then(res => {
+            const { IP, PORT } = JSON.parse(res)
+            const peer = new Peer("", {
+                host: IP,
+                port: 3002
+            })
+            //* API
+            peer.on("open", peerID => {
+                socket?.emit("set-peer-id", meetingCode, socketID, peerID)
+            })
+            setPeer(peer)
+        })
+        return () => peer?.disconnect()
+    }, [peer, socket, socketID, meetingCode])
+    /* --- SOCKET API HANDLING -- */
     useEffect(() => {
         //* EMIT (REQUEST)
         socket?.emit("get-chatLog", meetingCode) //? Get room's chat log

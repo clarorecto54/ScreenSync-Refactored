@@ -6,6 +6,7 @@ import { RoomSystem } from "./systems/room"
 import { RoomInfo } from "./typings/room.typings"
 import ChatSystem from "./systems/chat"
 import InteractiveSystem from "./systems/interactive"
+import PeerSystem from "./systems/peer"
 const os = require("os")
 
 /* ------- SERVER INIT ------ */
@@ -53,6 +54,8 @@ io.on("connection", (socket) => {
     NoEmptyRoom() //? Clears up empty rooms on every connection
     MainLog()
     /* -------- MAIN API -------- */
+    //* PEER SYSTEM
+    PeerSystem(socket)
     //* TEST
     socket.on("test", () => { console.log("Test Success") })
     //* ROOM SYSTEM

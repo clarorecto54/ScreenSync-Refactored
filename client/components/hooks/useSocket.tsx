@@ -25,7 +25,8 @@ export function SocketProvider({ children }: { children: ReactNode }) {
             method: "GET",
             cache: "no-store"
         }).then(res => res.text()).then(res => {
-            setServer(JSON.parse(res))
+            const { IP, PORT } = JSON.parse(res)
+            setServer(`http://${IP}:${PORT}`)
         })
         const socket = io(server)
         setSocket(socket)
