@@ -70,8 +70,7 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
             })
             setPeer(peer)
         })
-        return () => peer?.disconnect()
-    }, [peer, socket, socketID, meetingCode])
+    }, [socket, socketID, meetingCode])
     /* --- SOCKET API HANDLING -- */
     useEffect(() => {
         //* EMIT (REQUEST)
@@ -95,7 +94,8 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         socket?.on("kick-participant", () => {
             setActivePopup("System Kick")
         })
-    }, [socket, meetingCode, activePopup])
+        return () => peer?.disconnect()
+    }, [peer, socket, meetingCode, activePopup])
     /* ------ EVENT HANDLER ----- */
     useEffect(() => {
         if (clientLeaved) {
