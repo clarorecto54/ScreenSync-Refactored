@@ -4,7 +4,11 @@ import { useSession } from "@/components/hooks/useSession"
 /* ----- MAIN FUNCTIONS ----- */
 export default function Dock() {
     /* ----- STATES & HOOKS ----- */
-    const { setClientLeaved } = useSession()
+    const {
+        setClientLeaved,
+        isStreaming, setIsStreaming,
+        stream, setStream,
+    } = useSession()
     /* -------- RENDERING ------- */
     return <div //* APP DOCK
         className="flex gap-[16px] justify-center items-center">
@@ -34,6 +38,22 @@ export default function Dock() {
             )} />
         <Button //* SHARE SCREEN
             circle useIcon iconSrc="/[Icon] Tabs.png" iconOverlay
+            onClick={async () => {
+                if (!isStreaming && navigator.mediaDevices.getDisplayMedia) { //? Start Streaming
+                    console.log("Start Streaming")
+                    setStream(await navigator.mediaDevices.getDisplayMedia({
+                        audio: true,
+                        video: {
+                            displaySurface: "browser"
+                        }
+                    }))
+                    setIsStreaming(true)
+                } else { //? Stop Streaming
+                    stream.getVideoTracks().forEach(track => track.stop())
+                    setStream(new MediaStream)
+                    setIsStreaming(false)
+                }
+            }}
             className={classMerge(
                 "bg-[#525252]", //? Background
                 "hover:bg-[#646464]", //? Hover

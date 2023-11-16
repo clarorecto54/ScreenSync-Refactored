@@ -2,16 +2,25 @@
 import { useSession } from "@/components/hooks/useSession";
 import { classMerge } from "@/components/utils";
 import DefaultDisplay from "./defaultDisplay";
+import StreamDisplay from "./streamDisplay";
+import { useEffect } from "react";
 export default function MainDisplay() {
     /* ----- STATES & HOOKS ----- */
-    const { //* SESSION CONTEXT HOOK
+    const {
         isStreaming
     } = useSession()
+    /* ------ EVENT HANDLER ----- */
+    useEffect(() => {
+        console.log(isStreaming)
+    }, [isStreaming])
+    /* -------- RENDERING ------- */
     return <div //* CONTAINER
         className={classMerge(
             "h-full w-full", //? Sizing
             "rounded-3xl overflow-hidden", //? Border
+            "flex relative", //? Display
         )}>
-        {!isStreaming && <DefaultDisplay />}
+        <DefaultDisplay />
+        {isStreaming && <StreamDisplay />}
     </div>
 }

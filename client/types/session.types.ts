@@ -1,6 +1,5 @@
-import { Dispatch, SetStateAction } from "react"
+import { Dispatch, SetStateAction, MutableRefObject, LegacyRef } from "react"
 import { ParticipantsProps } from "./lobby.types"
-
 /* -------- INTERFACE ------- */
 export interface SessionProps {
     isHost: boolean
@@ -10,6 +9,8 @@ export interface SessionProps {
     chatLog: MessageProps[]
     isStreaming: boolean
     setIsStreaming: Dispatch<SetStateAction<boolean>>
+    stream: MediaStream
+    setStream: Dispatch<SetStateAction<MediaStream>>
     isAnnotating: boolean
     setIsAnnotating: Dispatch<SetStateAction<boolean>>
     activePopup: string

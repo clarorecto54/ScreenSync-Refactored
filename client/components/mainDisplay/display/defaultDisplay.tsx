@@ -1,22 +1,35 @@
+import { useSession } from "@/components/hooks/useSession";
 import { classMerge } from "@/components/utils";
 import Image from "next/image";
 /* ----- DEFAULT DISPLAY ---- */
 export default function DefaultDisplay() {
+    /* ----- STATES & HOOKS ----- */
+    const { isStreaming } = useSession()
+    /* -------- RENDERING ------- */
     return <div //* CONTAINER
         className={classMerge(
             "h-full w-full", //? Sizing
-            "bg-[#525252]", //? Background
+            isStreaming ? "bg-[#161616]" : "bg-[#525252]", //? Conditional Background
             "flex flex-col gap-[32px] justify-center items-center Unselectable", //? Display
+            "transition-[background-color] duration-500", //? Animation
         )}>
         <div //* LOGO CONTAINER
-            className="relative aspect-square h-[256px]">
+            className={classMerge(
+                "relative aspect-square h-[256px]", //? Base Styling
+                isStreaming ? "opacity-0" : "opacity-100", //? Conditional
+                "transition-[opacity] duration-500" //? Animation
+            )} >
             <Image //* LOGO
                 src="/[Logo] TUP.png"
                 alt=""
                 fill />
-        </div>
+        </div >
         <label //* SCHOOL NAME
-            className="text-center font-[500] text-[20px] font-[Montserrat] leading-[40px]">
+            className={classMerge(
+                "text-center font-[500] text-[20px] font-[Montserrat] leading-[40px]", //? Base Styling
+                isStreaming ? "opacity-0" : "opacity-100", //? Conditional
+                "transition-[opacity] duration-500" //? Animation
+            )}>
             Technological University of the Philippines <br />
             Cavite Campus
         </label>

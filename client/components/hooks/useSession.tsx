@@ -1,11 +1,12 @@
 "use client"
 import { MessageProps, SessionProps } from "@/types/session.types"
-import { ReactNode, createContext, useContext, useEffect, useState } from "react"
+import { ReactNode, createContext, useContext, useEffect, useState, useRef, MutableRefObject } from "react"
 import { useGlobals } from "./useGlobals"
 import { redirect, RedirectType } from "next/navigation"
 import { ParticipantsProps } from "@/types/lobby.types"
 import { useSocket } from "./useSocket"
 import { Peer } from "peerjs"
+// TODO PUT THE STREAM ON THE PEER FOR RTC
 /* --------- CONTEXT -------- */
 const SessionContext = createContext<SessionProps>({
     isHost: false,
@@ -15,6 +16,8 @@ const SessionContext = createContext<SessionProps>({
     chatLog: [],
     isStreaming: false,
     setIsStreaming: () => { },
+    stream: new MediaStream,
+    setStream: () => { },
     isAnnotating: false,
     setIsAnnotating: () => { },
     activePopup: "",
@@ -40,6 +43,7 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
     const [mutedList, setMutedList] = useState<string[]>([])
     const [chatLog, setChatLog] = useState<MessageProps[]>([])
     const [isStreaming, setIsStreaming] = useState<boolean>(false)
+    const [stream, setStream] = useState<MediaStream>(new MediaStream)
     const [isAnnotating, setIsAnnotating] = useState<boolean>(false)
     const [activePopup, setActivePopup] = useState<string>("")
     const [newMessage, setNewMessage] = useState<boolean>(false)
@@ -112,6 +116,7 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         mutedList: mutedList, setMutedList,
         chatLog: chatLog,
         isStreaming: isStreaming, setIsStreaming,
+        stream: stream, setStream,
         isAnnotating: isAnnotating, setIsAnnotating,
         activePopup: activePopup, setActivePopup,
         newMessage: newMessage, setNewMessage,
