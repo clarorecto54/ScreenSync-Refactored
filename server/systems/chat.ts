@@ -17,7 +17,6 @@ export default function ChatSystem(socket: Socket) {
         RoomList.forEach(room => {
             if (room.meetingCode === meetingCode) { //? Find the specific room
                 SendUpdatedChatLog(meetingCode, room)
-                BroadCastNewMessage(socket, meetingCode)
                 return
             }
         })

@@ -33,7 +33,7 @@ export default function InfoControlsPopup({ socketID }: { socketID: string }) {
             "bg-white shadow", //? Background
             "flex flex-col gap-[4px]", //? Display
         )}>
-        <Button //* MUTE BUTTON
+        {participantList.length > 1 && <Button //* MUTE BUTTON
             textSize={("small")}
             useIcon
             onClick={() => {
@@ -59,7 +59,7 @@ export default function InfoControlsPopup({ socketID }: { socketID: string }) {
                 "transition-all duration-200", //? Animation
             )} >
             {muteText}
-        </Button>
+        </Button>}
         {(socket.socketID !== socketID) && <Button //* ALERT BUTTON
             textSize={("small")}
             useIcon

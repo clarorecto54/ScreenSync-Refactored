@@ -10,6 +10,7 @@ import PeerSystem from "./systems/peer"
 const os = require("os")
 
 /* ------- SERVER INIT ------ */
+// TODO PEER INTEGRATION
 const httpServer = createServer(require("express")())
 export const io = new Server(httpServer, { cors: { origin: "*" } });
 

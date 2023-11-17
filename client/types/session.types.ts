@@ -9,6 +9,8 @@ export interface SessionProps {
     chatLog: MessageProps[]
     isStreaming: boolean
     setIsStreaming: Dispatch<SetStateAction<boolean>>
+    muteStream: boolean
+    setMuteStream: Dispatch<SetStateAction<boolean>>
     stream: MediaStream
     setStream: Dispatch<SetStateAction<MediaStream>>
     isAnnotating: boolean

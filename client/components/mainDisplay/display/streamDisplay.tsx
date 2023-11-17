@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react"
 export default function StreamDisplay() {
     /* ----- STATES & HOOKS ----- */
     const {
-        isStreaming, stream
+        isStreaming, stream, muteStream
     } = useSession()
     const streamRef = useRef<HTMLVideoElement>(null)
     /* ------ EVENT HANDLER ----- */
@@ -27,9 +27,15 @@ export default function StreamDisplay() {
         )}>
         <video
             ref={streamRef}
+            muted={muteStream}
             className="h-full w-full rounded-[32px] overflow-hidden"
             autoPlay
             style={{
+                colorAdjust: "exact",
+                colorInterpolation: "sRGB",
+                colorRendering: "optimizeQuality",
+                textRendering: "optimizeLegibility",
+                shapeRendering: "geometricPrecision",
                 aspectRatio: stream.getVideoTracks()[0].getSettings().aspectRatio
             }} />
     </div>
