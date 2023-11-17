@@ -59,6 +59,7 @@ export default function FormMenu() {
                     const generatedCode = v4()
                     const data: RoomInfo = { //? Starting the meeting
                         hostID: socketID,
+                        hostIPv4: IPv4,
                         hostname: username,
                         meetingCode: generatedCode,
                         meetingKey: key,

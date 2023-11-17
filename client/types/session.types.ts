@@ -3,6 +3,12 @@ import { ParticipantsProps } from "./lobby.types"
 /* -------- INTERFACE ------- */
 export interface SessionProps {
     isHost: boolean
+    streamRequest: {
+        id: string;
+        name: string;
+    }
+    streamAccess: boolean
+    setStreamAccess: Dispatch<SetStateAction<boolean>>
     participantList: ParticipantsProps[]
     mutedList: string[]
     setMutedList: Dispatch<SetStateAction<string[]>>

@@ -10,6 +10,9 @@ import { Peer } from "peerjs"
 /* --------- CONTEXT -------- */
 const SessionContext = createContext<SessionProps>({
     isHost: false,
+    streamRequest: { id: "", name: "" },
+    streamAccess: false,
+    setStreamAccess: () => { },
     participantList: [],
     mutedList: [],
     setMutedList: () => { },
@@ -40,7 +43,9 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         username, setUsername,
         meetingCode, setMeetingCode
     } = useGlobals()
-    const [isHost, setIsHost] = useState<boolean>(false) // TODO HOST AUTH
+    const [isHost, setIsHost] = useState<boolean>(false)
+    const [streamRequest, setStreamRequest] = useState<{ id: string, name: string }>({ id: "", name: "" })
+    const [streamAccess, setStreamAccess] = useState<boolean>(false)
     const [participantList, setParticipantList] = useState<ParticipantsProps[]>([])
     const [mutedList, setMutedList] = useState<string[]>([])
     const [chatLog, setChatLog] = useState<MessageProps[]>([])
@@ -81,9 +86,15 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
     /* --- SOCKET API HANDLING -- */
     useEffect(() => {
         //* EMIT (REQUEST)
+        socket?.emit("check-host", username, meetingCode) //? Check if host
         socket?.emit("get-chatLog", meetingCode) //? Get room's chat log
         socket?.emit("get-participant-list") //? Get participant list
         //* ON (RESPONSE)
+        socket?.on("get-stream-access", (id: string, username: string) => {
+            setStreamRequest({ id: id, name: username })
+            setActivePopup("System Access")
+        })
+        socket?.on("grant-stream-access", () => setStreamAccess(true))
         socket?.on("updated-chatLog", (data: MessageProps[]) => {
             setChatLog(data) //? Update the chat log from the server's data
         })
@@ -101,8 +112,9 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         socket?.on("kick-participant", () => {
             setActivePopup("System Kick")
         })
+        socket?.on("host-authority", () => setIsHost(true))
         return () => peer?.disconnect()
-    }, [peer, socket, meetingCode, activePopup])
+    }, [peer, socket, meetingCode, activePopup, username])
     /* ------ EVENT HANDLER ----- */
     useEffect(() => {
         if (clientLeaved) {
@@ -117,7 +129,11 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         if (isStreaming) {
             stream.getTracks().forEach(track => { //? Stop Sharing Popup Handler
-                track.addEventListener("ended", () => { setIsStreaming(false); setStream(new MediaStream()) })
+                track.addEventListener("ended", () => {
+                    setStream(new MediaStream())
+                    setIsStreaming(false)
+                    setStreamAccess(false)
+                })
             })
             stream.getTracks().forEach(track => { //? Track Modifications
                 track.applyConstraints({
@@ -148,6 +164,8 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
     /* -------- RENDERING ------- */
     return <SessionContext.Provider value={{
         isHost: isHost,
+        streamRequest: streamRequest,
+        streamAccess: streamAccess, setStreamAccess,
         participantList: participantList,
         mutedList: mutedList, setMutedList,
         chatLog: chatLog,

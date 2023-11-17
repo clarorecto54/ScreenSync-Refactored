@@ -4,6 +4,7 @@ import { ParticipantsProps } from "@/types/lobby.types";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import InfoControlsPopup from "./popup";
 import { useSocket } from "@/components/hooks/useSocket";
+import { useSession } from "@/components/hooks/useSession";
 
 export default function InfoControlsTrigger({
     data,
@@ -16,6 +17,7 @@ export default function InfoControlsTrigger({
 }) {
     /* ----- STATES & HOOKS ----- */
     const { socketID } = useSocket()
+    const { participantList } = useSession()
     const triggerRef = useRef<HTMLDivElement>(null)
     const [refHeight, setRefHeight] = useState<number>(0)
     /* ------- REF HANDLER ------ */
@@ -34,7 +36,7 @@ export default function InfoControlsTrigger({
             className="w-full break-words text-[16px]">
             {socketID === data.socketID ? `${data.name} (You)` : data.name}
         </label>
-        <div //* TRIGGER CONTAINER
+        {participantList.length > 1 && <div //* TRIGGER CONTAINER
             className="flex justify-center items-end">
             <div //* TRIGGER REF
                 ref={triggerRef}>
@@ -59,6 +61,6 @@ export default function InfoControlsTrigger({
                 }}>
                 <InfoControlsPopup socketID={data.socketID} />
             </div>}
-        </div>
+        </div>}
     </div>
 }

@@ -26,10 +26,11 @@ export function NoEmptyRoom() {
         return room.participants.length !== 0 //? Add the rooms with active participants into the new array
     })
 }
-export function MainLog() {
-    //? LOGS
-    console.log(`[ ${TimeLog(true)} ][ SERVER ] Total Clients: ${io.sockets.sockets.size}`) //? Total clients
-    console.log(`[ ${TimeLog(true)} ][ SERVER ] Total Rooms: ${RoomList.length}`)
+export function ServerLog(
+    server: "socket" | "peer",
+    message: string
+) {
+    console.log(`[ ${TimeLog(true)} ][ ${server.toUpperCase()} ] ${message}`)
 }
 function ClearInactiveSockets() {
     var activeSockets: string[] = []
@@ -44,16 +45,21 @@ function ClearInactiveSockets() {
 }
 /* ------ API HANDLING ------ */
 io.on("connection", (socket) => {
+    //* CLIENT CONNECTION
+    setInterval(() => {
+        io.local.emit("get-server-time", TimeLog())
+    }, 1000)
+    ClearInactiveSockets()
+    NoEmptyRoom() //? Clears up empty rooms on every connection
+    ServerLog("socket", `Total Client: ${io.sockets.sockets.size}`)
+    ServerLog("socket", `Total Room: ${RoomList.length}`)
     //* CLIENT DISCONNECTION
     socket.on("disconnect", () => {
         ClearInactiveSockets()
         NoEmptyRoom() //? Clears up empty rooms on every disconnection
-        MainLog()
+        ServerLog("socket", `Total Client: ${io.sockets.sockets.size}`)
+        ServerLog("socket", `Total Room: ${RoomList.length}`)
     })
-    //* CLIENT CONNECTION
-    ClearInactiveSockets()
-    NoEmptyRoom() //? Clears up empty rooms on every connection
-    MainLog()
     /* -------- MAIN API -------- */
     //* PEER SYSTEM
     PeerSystem(socket)
@@ -65,6 +71,17 @@ io.on("connection", (socket) => {
     InteractiveSystem(socket)
     //* CHAT SYSTEM
     ChatSystem(socket)
+    //* GET STREAM ACCESS
+    socket.on("get-stream-access", (username: string, meetingCode: string) => {
+        RoomList.forEach(room => {
+            if (room.meetingCode === meetingCode) {
+                io.to(room.hostID).emit("get-stream-access", socket.id, username)
+            }
+        })
+    })
+    socket.on("grant-stream-access", (id: string) => {
+        io.to(id).emit("grant-stream-access")
+    })
     //* GET CLIENT IP
     socket.on("req-address", () => {
         io.to(socket.id).emit("my-address", socket.handshake.address.toString())

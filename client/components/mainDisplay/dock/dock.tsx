@@ -1,12 +1,17 @@
 import { classMerge } from "@/components/utils"
 import Button from "@/components/atom/button"
 import { useSession } from "@/components/hooks/useSession"
+import { useSocket } from "@/components/hooks/useSocket"
+import { useGlobals } from "@/components/hooks/useGlobals"
 /* ----- MAIN FUNCTIONS ----- */
 export default function Dock() {
     /* ----- STATES & HOOKS ----- */
+    const { username, meetingCode } = useGlobals()
+    const { socket } = useSocket()
     const {
         setClientLeaved,
         isHost, stream,
+        streamAccess, setStreamAccess,
         isStreaming, setIsStreaming,
         muteStream, setMuteStream,
         setStream,
@@ -14,7 +19,7 @@ export default function Dock() {
     /* -------- RENDERING ------- */
     return <div //* APP DOCK
         className="flex gap-[16px] justify-center items-center">
-        {isStreaming && <Button //* ANNOTATION
+        {(isStreaming || streamAccess) && <Button //* ANNOTATION
             circle useIcon iconSrc="/[Icon] Annotations.png" iconOverlay
             className={classMerge(
                 "bg-[#525252]", //? Background
@@ -26,12 +31,12 @@ export default function Dock() {
                 "bg-[#525252]", //? Background
                 "hover:bg-[#646464]", //? Hover
             )} />
-        <Button //* RAISE HAND
+        {!isHost && <Button //* RAISE HAND
             circle useIcon iconSrc="/[Icon] Raise Hand.png" iconOverlay
             className={classMerge(
                 "bg-[#525252]", //? Background
                 "hover:bg-[#646464]", //? Hover
-            )} />
+            )} />}
         {(isStreaming && stream.getAudioTracks().length > 0) && <Button //* MUTE
             circle useIcon iconOverlay
             iconSrc={muteStream ? "/[Icon] Audio (1).png" : "/[Icon] Audio (2).png"}
@@ -42,18 +47,23 @@ export default function Dock() {
                 "hover:bg-[#646464]", //? Hover
             )} />}
         <Button //* SHARE SCREEN
-            circle useIcon iconOverlay
+            circle useIcon iconOverlay // TODO DISABLE THIS BUTTON WHEN HOST IS STREAMING
             iconSrc={isStreaming ? "/[Icon] Share Screen (1).png" : "/[Icon] Share Screen (2).png"}
-            customOverlay={isStreaming ? "redOverlay" : undefined}
+            customOverlay={(isStreaming || (!isHost && !streamAccess)) ? "redOverlay" : undefined}
             onClick={async () => {
-                if (!isStreaming && navigator.mediaDevices.getDisplayMedia) { //? Start Streaming
-                    await navigator.mediaDevices.getDisplayMedia({
-                        audio: true,
-                        video: { displaySurface: "browser" },
-                    }).then(mediaStream => { setIsStreaming(true); setStream(mediaStream) })
-                } else { //? Stop Streaming
-                    setStream(new MediaStream())
-                    setIsStreaming(false)
+                if (isHost || streamAccess) {
+                    if (!isStreaming && navigator.mediaDevices.getDisplayMedia) { //? Start Streaming
+                        await navigator.mediaDevices.getDisplayMedia({
+                            audio: true,
+                            video: { displaySurface: "browser" },
+                        }).then(mediaStream => { setIsStreaming(true); setStream(mediaStream) })
+                    } else { //? Stop Streaming
+                        setStream(new MediaStream())
+                        setIsStreaming(false)
+                        setStreamAccess(false)
+                    }
+                } else {
+                    socket?.emit("get-stream-access", username, meetingCode)
                 }
             }}
             className={classMerge(

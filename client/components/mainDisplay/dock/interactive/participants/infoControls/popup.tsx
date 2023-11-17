@@ -8,7 +8,7 @@ export default function InfoControlsPopup({ socketID }: { socketID: string }) {
     /* ----- STATES & HOOKS ----- */
     const socket = useSocket()
     const { meetingCode } = useGlobals()
-    const { participantList, mutedList, setMutedList } = useSession()
+    const { isHost, participantList, mutedList, setMutedList } = useSession()
     const [muteText, setMuteText] = useState<string>("")
     /* ------ EVENT HANDLER ----- */
     useEffect(() => {
@@ -60,7 +60,7 @@ export default function InfoControlsPopup({ socketID }: { socketID: string }) {
             )} >
             {muteText}
         </Button>}
-        {(socket.socketID !== socketID) && <Button //* ALERT BUTTON
+        {((socket.socketID !== socketID) && isHost) && <Button //* ALERT BUTTON
             textSize={("small")}
             useIcon
             onClick={() => {
@@ -72,7 +72,7 @@ export default function InfoControlsPopup({ socketID }: { socketID: string }) {
                 "text-black font-[600]", //? Font
                 "transition-all duration-200", //? Animation
             )} >Alert</Button>}
-        {(socket.socketID !== socketID) && <Button //* KICK BUTTON
+        {((socket.socketID !== socketID) && isHost) && <Button //* KICK BUTTON
             textSize={("small")}
             useIcon
             onClick={() => {

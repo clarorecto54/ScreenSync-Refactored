@@ -7,6 +7,7 @@ export interface ParticipantsProps {
 export interface RoomInfo {
     hostname: string
     hostID: string
+    hostIPv4: string
     meetingCode: string
     meetingKey: string
     participants: ParticipantsProps[]
