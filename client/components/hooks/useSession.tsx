@@ -74,14 +74,9 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         }).then(res => res.text()).then(res => {
             try {
                 const { IP, PORT } = JSON.parse(res)
-                const peer = new Peer("", {
+                const peer = new Peer(socketID, {
                     host: IP,
                     port: PORT + 1
-                })
-                //* API
-                peer.on("open", peerID => {
-                    console.log(`Client Peer ID: ${peerID}`)
-                    socket.emit("set-peer-id", meetingCode, socketID, peerID)
                 })
                 setPeer(peer)
             } catch (error) { console.log(`Peer Error: ${error}`) }

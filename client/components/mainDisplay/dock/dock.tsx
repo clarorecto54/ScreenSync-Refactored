@@ -10,7 +10,7 @@ export default function Dock() {
     const { socket } = useSocket()
     const {
         setClientLeaved,
-        isHost, stream,
+        isHost, stream, peer,
         streamAccess, setStreamAccess,
         isStreaming, setIsStreaming,
         muteStream, setMuteStream,
@@ -56,7 +56,10 @@ export default function Dock() {
                         await navigator.mediaDevices.getDisplayMedia({
                             audio: true,
                             video: { displaySurface: "browser" },
-                        }).then(mediaStream => { setIsStreaming(true); setStream(mediaStream) })
+                        }).then(mediaStream => {
+                            setIsStreaming(true) //? Start streaming
+                            setStream(mediaStream) //? Set the stream scope to the page
+                        })
                     } else { //? Stop Streaming
                         setStream(new MediaStream())
                         setIsStreaming(false)

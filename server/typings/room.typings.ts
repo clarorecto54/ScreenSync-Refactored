@@ -1,7 +1,6 @@
 export interface ParticipantsProps {
     name: string
     socketID: string
-    peerID?: string
     IPv4: string
 }
 export interface RoomInfo {
