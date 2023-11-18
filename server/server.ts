@@ -4,15 +4,47 @@ import { Server } from "socket.io"
 import { writeFileSync } from "fs"
 import { RoomSystem } from "./systems/room"
 import { RoomInfo } from "./typings/room.typings"
+import { PeerServer } from "peer"
 import ChatSystem from "./systems/chat"
 import InteractiveSystem from "./systems/interactive"
 import PeerSystem from "./systems/peer"
 const os = require("os")
-
+/* -------- PORT & IP ------- */
+interface ServerProps { //* INTERFACE
+    IP: string
+    PORT: number
+}
+function GETIP() {
+    var IP = "localhost" //? Default IP
+    try {
+        for (var index = 0; index < 4; index++) { //? Find a valid IP
+            const data: string = os.networkInterfaces()[Object.keys(os.networkInterfaces())[index]][0].address
+            if ((data.split(".").length - 1) === 3) {
+                IP = data //? If valid IP found it will return it
+                break
+            }
+        }
+    } catch (error) { console.log("No LAN Detected running on localhost") }
+    return IP
+}
+const config: ServerProps = { //* PROPS
+    IP: GETIP(),
+    PORT: 3001
+}
+try {
+    const props: ServerProps = require("../client//server.json") //? Checks if the server config is existing on the client
+    if ((!props.PORT || !props.IP) || ((props.PORT !== config.PORT) || (props.IP !== config.IP))) { throw Error } //? If the server config is not valid it will throw and error
+} catch (error) {
+    writeFileSync("../client//server.json", JSON.stringify(config, null, 2), "utf-8") //? Export the server config to JSON
+}
 /* ------- SERVER INIT ------ */
-// TODO PEER INTEGRATION
 const httpServer = createServer(require("express")())
 export const io = new Server(httpServer, { cors: { origin: "*" } });
+export const peer = PeerServer({
+    allow_discovery: true,
+    port: config.PORT + 1,
+    path: "/"
+})
 
 /* ---- GET TIME FUNCTION --- */
 export function TimeLog(seconds?: boolean) { return new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: seconds ? "2-digit" : undefined }) }
@@ -44,6 +76,7 @@ function ClearInactiveSockets() {
     })
 }
 /* ------ API HANDLING ------ */
+//* SOCKET HANDLING
 io.on("connection", (socket) => {
     //* CLIENT CONNECTION
     setInterval(() => {
@@ -87,39 +120,24 @@ io.on("connection", (socket) => {
         io.to(socket.id).emit("my-address", socket.handshake.address.toString())
     })
 });
-
-/* -------- PORT & IP ------- */
-interface ServerProps { //* INTERFACE
-    IP: string
-    PORT: number
-}
-function GETIP() {
-    var IP = "localhost" //? Default IP
-    try {
-        for (var index = 0; index < 4; index++) { //? Find a valid IP
-            const data: string = os.networkInterfaces()[Object.keys(os.networkInterfaces())[index]][0].address
-            if ((data.split(".").length - 1) === 3) {
-                IP = data //? If valid IP found it will return it
-                break
-            }
-        }
-    } catch (error) { console.log("No LAN Detected running on localhost") }
-    return IP
-}
-const config: ServerProps = { //* PROPS
-    IP: GETIP(),
-    PORT: 3001
-}
-try {
-    const props: ServerProps = require("../client//server.json") //? Checks if the server config is existing on the client
-    if ((!props.PORT || !props.IP) || ((props.PORT !== config.PORT) || (props.IP !== config.IP))) { throw Error } //? If the server config is not valid it will throw and error
-} catch (error) {
-    writeFileSync("../client//server.json", JSON.stringify(config, null, 2), "utf-8") //? Export the server config to JSON
-}
+//* PEER HANDLING
+var totalPeers: number = 0
+peer.on("connection", (client) => {
+    totalPeers += 1
+    ServerLog("peer", `Total Client: ${totalPeers}`)
+    ServerLog("peer", `Client Connected: ${client.getId()}`)
+})
+peer.on("disconnect", (client) => {
+    totalPeers -= 1
+    ServerLog("peer", `Total Client: ${totalPeers}`)
+    ServerLog("peer", `Client Disconnected: ${client.getId()}`)
+})
+/* - EXPRESS INITIALIZATION - */
 httpServer.listen(
-    3001,
+    config.PORT,
     () => {
         console.clear() //? Clear the log
-        console.log(`[ ${TimeLog(true)} ][ SERVER RUNNING ] http://${config.IP}:${config.PORT}`)
+        console.log(`[ ${TimeLog(true)} ][ SOCKET RUNNING ] http://${config.IP}:${config.PORT}`)
+        console.log(`[ ${TimeLog(true)} ][ PEER RUNNING ] http://${config.IP}:${config.PORT + 1}`)
     }
 )

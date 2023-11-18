@@ -4,8 +4,7 @@
   "description": "TUPC Screen Mirroring Solution",
   "main": "index.js",
   "scripts": {
-    "socketServer": "nodemon server.ts",
-    "peerServer": "peerjs --port 3002"
+    "server": "nodemon server.ts"
   },
   "keywords": [],
   "author": "",

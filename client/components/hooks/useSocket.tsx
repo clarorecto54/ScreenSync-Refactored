@@ -5,7 +5,7 @@ import { Socket, io } from "socket.io-client"
 /* --------- CONTEXT -------- */
 const SocketContext = createContext<SocketProps>({
     //* DEFAULT VALUES
-    socket: null,
+    socket: io(),
     socketID: "",
     IPv4: "",
     isConnected: false
@@ -15,7 +15,7 @@ export function useSocket() { return useContext(SocketContext) }
 /* -------- PROVIDER -------- */
 export function SocketProvider({ children }: { children: ReactNode }) {
     const [server, setServer] = useState<string>("")
-    const [socket, setSocket] = useState<Socket | null>(null)
+    const [socket, setSocket] = useState<Socket>(io())
     const [socketID, setSocketID] = useState<string>("")
     const [IPv4, setIPv4] = useState<string>("")
     const [isConnected, setIsConneted] = useState<boolean>(false)

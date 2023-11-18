@@ -1,7 +1,9 @@
 import { Dispatch, SetStateAction, MutableRefObject, LegacyRef } from "react"
 import { ParticipantsProps } from "./lobby.types"
+import Peer from "peerjs"
 /* -------- INTERFACE ------- */
 export interface SessionProps {
+    peer: Peer
     isHost: boolean
     streamRequest: {
         id: string;
