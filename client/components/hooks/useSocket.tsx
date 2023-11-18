@@ -1,10 +1,11 @@
 "use client"
 import { SocketProps } from "@/types/socket.types";
+import Peer from "peerjs";
 import { ReactNode, createContext, useEffect, useState, useContext } from "react";
 import { Socket, io } from "socket.io-client"
 /* --------- CONTEXT -------- */
 const SocketContext = createContext<SocketProps>({
-    //* DEFAULT VALUES
+    peer: undefined,
     socket: io(),
     socketID: "",
     IPv4: "",
@@ -14,7 +15,9 @@ const SocketContext = createContext<SocketProps>({
 export function useSocket() { return useContext(SocketContext) }
 /* -------- PROVIDER -------- */
 export function SocketProvider({ children }: { children: ReactNode }) {
+    const [peerConfig, setPeerConfig] = useState<{ IP: string, PORT: 0 }>({ IP: "", PORT: 0 })
     const [server, setServer] = useState<string>("")
+    const [peer, setPeer] = useState<Peer | undefined>(undefined)
     const [socket, setSocket] = useState<Socket>(io())
     const [socketID, setSocketID] = useState<string>("")
     const [IPv4, setIPv4] = useState<string>("")
@@ -26,11 +29,23 @@ export function SocketProvider({ children }: { children: ReactNode }) {
             cache: "no-store"
         }).then(res => res.text()).then(res => {
             const { IP, PORT } = JSON.parse(res)
+            setPeerConfig({ IP, PORT })
             setServer(`http://${IP}:${PORT}`)
         })
         const socket = io(server)
         setSocket(socket)
+        setSocketID(socket.id)
+        import("peerjs").then(({ default: Peer }) => {
+            setPeer(new Peer(socket.id, {
+                path: "/",
+                host: peerConfig.IP,
+                port: peerConfig.PORT + 1
+            }))
+        })
         /* ------ API HANDLING ------ */
+        //* EMIT (REQUEST)
+        socket.emit("req-address")
+        //* ON (RESPONSE)
         socket.on("connect", () => setIsConneted(true))
         socket.on("disconnect", () => setIsConneted(false))
         socket.on("my-address", (myIPv4: string) => setIPv4(myIPv4))
@@ -39,15 +54,9 @@ export function SocketProvider({ children }: { children: ReactNode }) {
             socket.disconnect()
         }
     }, [server])
-    /* ----- EVENT HANDLING ----- */
-    useEffect(() => {
-        if (isConnected) {
-            setSocketID(socket?.id || "")
-            socket?.emit("req-address")
-        }
-    }, [socket, isConnected])
     /* -------- RENDERING ------- */
     return <SocketContext.Provider value={{
+        peer: peer,
         socket: socket,
         socketID: socketID,
         IPv4: IPv4,

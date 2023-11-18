@@ -40,7 +40,7 @@ export default function ChatsPopup() {
             onSubmit={(thisElement) => {
                 thisElement.preventDefault() //? Prevent refreshing the page on submit
                 if (message) {
-                    socket?.emit("send-message", { username, meetingCode, message })
+                    socket.emit("send-message", { username, meetingCode, message })
                     setMessage("")
                     if (inputRef.current) {
                         inputRef.current.focus() //? Textbox will stay on focus after sending a message

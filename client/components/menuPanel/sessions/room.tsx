@@ -34,7 +34,7 @@ export default function Room({ //* ARGS
             }
             else { //? If there are no meeting key user will join the room immediately
                 setMeetingCode(meetingCode)
-                socket?.emit("join-room", username, meetingCode)
+                socket.emit("join-room", username, meetingCode)
             }
         }}
         className={classMerge(
@@ -64,7 +64,7 @@ export default function Room({ //* ARGS
                 thisElement.preventDefault()
                 if (meetingKey === key) {
                     setMeetingCode(meetingCode)
-                    socket?.emit("join-room", username, meetingCode)
+                    socket.emit("join-room", username, meetingCode)
                     alertWrongKey(false)
                 }
                 else { //? Turn the input border to red if the key is wrong

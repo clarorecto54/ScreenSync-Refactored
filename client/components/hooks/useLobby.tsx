@@ -23,9 +23,9 @@ export function LobbyContextProvider({ children }: { children: ReactNode }) {
     /* ------ API HANDLING ------ */
     useEffect(() => {
         //* EMIT (REQUEST)
-        socket?.emit("get-room-list")
+        socket.emit("get-room-list")
         //* ON (RESPONSE)
-        socket?.on("updated-room-list", (newRoomList: RoomInfo[]) => {
+        socket.on("updated-room-list", (newRoomList: RoomInfo[]) => {
             setRoomList(newRoomList)
         })
     }, [socket, socketID])

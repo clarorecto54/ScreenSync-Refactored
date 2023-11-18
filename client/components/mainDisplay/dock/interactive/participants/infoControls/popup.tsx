@@ -64,7 +64,7 @@ export default function InfoControlsPopup({ socketID }: { socketID: string }) {
             textSize={("small")}
             useIcon
             onClick={() => {
-                socket.socket?.emit("alert-participant", meetingCode, socketID)
+                socket.socket.emit("alert-participant", meetingCode, socketID)
             }}
             className={classMerge(
                 "justify-start", //? Display
@@ -76,7 +76,7 @@ export default function InfoControlsPopup({ socketID }: { socketID: string }) {
             textSize={("small")}
             useIcon
             onClick={() => {
-                socket.socket?.emit("kick-participant", meetingCode, socketID)
+                socket.socket.emit("kick-participant", meetingCode, socketID)
             }}
             className={classMerge(
                 "justify-start", //? Display

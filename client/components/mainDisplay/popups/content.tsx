@@ -52,7 +52,7 @@ export default function ContentPopup() {
                                 setClientLeaved(true)
                             }
                             if (activePopup.includes("Access")) {
-                                socket?.emit("grant-stream-access", streamRequest.id)
+                                socket.emit("grant-stream-access", streamRequest.id)
                             }
                         }}
                         containerClass="w-max"

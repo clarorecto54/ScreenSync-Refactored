@@ -70,7 +70,7 @@ export default function FormMenu() {
                         }],
                         chatLog: []
                     }
-                    socket?.emit("create-meeting", data)
+                    socket.emit("create-meeting", data)
                     setMeetingCode(generatedCode)
                 }}
                 className={classMerge(

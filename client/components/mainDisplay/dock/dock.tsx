@@ -66,7 +66,7 @@ export default function Dock() {
                         setStreamAccess(false)
                     }
                 } else {
-                    socket?.emit("get-stream-access", username, meetingCode)
+                    socket.emit("get-stream-access", username, meetingCode)
                 }
             }}
             className={classMerge(

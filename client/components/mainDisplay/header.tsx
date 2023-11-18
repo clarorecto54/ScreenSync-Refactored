@@ -8,7 +8,7 @@ export default function Header() {
     const { socket } = useSocket()
     const [serverTime, setServerTime] = useState<string>("")
     useEffect(() => {
-        socket?.on("get-server-time", (time: string) => setServerTime(time))
+        socket.on("get-server-time", (time: string) => setServerTime(time))
     }, [socket])
     /* -------- RENDERING ------- */
     return <div //* CONTAINER
