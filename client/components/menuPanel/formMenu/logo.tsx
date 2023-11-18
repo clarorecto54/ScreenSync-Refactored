@@ -10,7 +10,8 @@ export default function Logo() {
             <Image //* LOGO
                 src="/[Logo] TUP.png"
                 alt=""
-                fill />
+                fill
+                sizes="(max-wdth: 1200px) 100vw" />
         </div>
         <div //* APP NAME & SERVER STATUS
             className="flex flex-col">

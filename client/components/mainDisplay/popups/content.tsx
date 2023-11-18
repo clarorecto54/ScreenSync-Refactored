@@ -33,7 +33,8 @@ export default function ContentPopup() {
                     className="redOverlay"
                     src={asset.icon}
                     alt=""
-                    fill />
+                    fill
+                    sizes="(max-wdth: 512px) 100vw" />
             </div>
             <div //* MAIN CONTAINER
                 className="flex flex-col gap-[8px] justify-center items-center px-[32px]">

@@ -105,7 +105,8 @@ const Textbox = forwardRef<HTMLInputElement, TextboxProps>(({
                     )}
                     src={iconSrc ? iconSrc : "/[Icon] Missing.png"}
                     alt=""
-                    fill />
+                    fill
+                    sizes="(max-wdth: 1200px) 100vw" />
             </div>
         </div>}
         <input //* TEXTBOX

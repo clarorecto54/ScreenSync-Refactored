@@ -89,6 +89,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
                     src={iconSrc ? iconSrc : "/[Icon] Missing.png"}
                     alt=""
                     fill
+                    sizes="(max-wdth: 1200px) 100vw"
                 />
             </div>}
             {children}

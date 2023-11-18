@@ -22,7 +22,8 @@ export default function DefaultDisplay() {
             <Image //* LOGO
                 src="/[Logo] TUP.png"
                 alt=""
-                fill />
+                fill
+                sizes="(max-wdth: 1200px) 100vw" />
         </div >
         <label //* SCHOOL NAME
             className={classMerge(

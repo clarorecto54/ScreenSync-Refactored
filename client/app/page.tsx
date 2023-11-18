@@ -16,7 +16,8 @@ export default function Home() {
         className="absolute object-cover -z-[1]"
         src="/[Image] Background.png"
         alt=""
-        fill />
+        fill
+        sizes="(max-wdth: 3194px) 100vw" />
       <div //* BACKDROP
         className={classMerge(
           "h-full w-full", //? Sizing

@@ -50,7 +50,8 @@ export default function Room({ //* ARGS
                 <Image //* LOCKED SESSION ICON
                     src="/[Icons] Lock.png"
                     alt=""
-                    fill />
+                    fill
+                    sizes="(max-wdth: 512px) 100vw" />
             </div>}</label>
         <label //* MEETING CODE
             className="text-[10px] italic hover:cursor-pointer">{meetingCode}</label>
