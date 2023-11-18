@@ -10,7 +10,7 @@ export default function Dock() {
     const { socket } = useSocket()
     const {
         setClientLeaved,
-        isHost, stream, peer,
+        isHost, stream,
         streamAccess, setStreamAccess,
         isStreaming, setIsStreaming,
         muteStream, setMuteStream,
@@ -37,7 +37,7 @@ export default function Dock() {
                 "bg-[#525252]", //? Background
                 "hover:bg-[#646464]", //? Hover
             )} />}
-        {(isStreaming && stream.getAudioTracks().length > 0) && <Button //* MUTE
+        {(isStreaming && stream && stream.getAudioTracks().length > 0) && <Button //* MUTE
             circle useIcon iconOverlay
             iconSrc={muteStream ? "/[Icon] Audio (1).png" : "/[Icon] Audio (2).png"}
             customOverlay={muteStream ? "redOverlay" : undefined}

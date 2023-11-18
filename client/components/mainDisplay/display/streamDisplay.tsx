@@ -10,7 +10,7 @@ export default function StreamDisplay() {
     /* ------ EVENT HANDLER ----- */
     useEffect(() => {
         if (isStreaming) { //? Streaming
-            if (streamRef.current) {
+            if (streamRef.current && stream) {
                 streamRef.current.srcObject = stream
             }
         } else { //? Not Streaming
@@ -25,7 +25,7 @@ export default function StreamDisplay() {
             "h-full w-full", //? Sizing
             "absolute", //? Display
         )}>
-        <video
+        {stream && <video
             ref={streamRef}
             muted={muteStream}
             className="h-full w-full rounded-[32px] overflow-hidden"
@@ -37,6 +37,6 @@ export default function StreamDisplay() {
                 textRendering: "optimizeLegibility",
                 shapeRendering: "geometricPrecision",
                 aspectRatio: stream.getVideoTracks()[0].getSettings().aspectRatio
-            }} />
+            }} />}
     </div>
 }

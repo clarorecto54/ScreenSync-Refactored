@@ -5,11 +5,9 @@ import { useGlobals } from "./useGlobals"
 import { redirect, RedirectType } from "next/navigation"
 import { ParticipantsProps } from "@/types/lobby.types"
 import { useSocket } from "./useSocket"
-import { Peer } from "peerjs"
 // TODO PUT THE STREAM ON THE PEER FOR RTC
 /* --------- CONTEXT -------- */
 const SessionContext = createContext<SessionProps>({
-    peer: new Peer(),
     isHost: false,
     streamRequest: { id: "", name: "" },
     streamAccess: false,
@@ -22,7 +20,7 @@ const SessionContext = createContext<SessionProps>({
     setIsStreaming: () => { },
     muteStream: false,
     setMuteStream: () => { },
-    stream: new MediaStream,
+    stream: undefined,
     setStream: () => { },
     isAnnotating: false,
     setIsAnnotating: () => { },
@@ -39,7 +37,6 @@ export function useSession() { return useContext(SessionContext) }
 export function SessionContextProvider({ children }: { children: ReactNode }) {
     /* ----- STATES & HOOKS ----- */
     const { socket, socketID } = useSocket()
-    const [peer, setPeer] = useState<Peer>(new Peer())
     const {
         username, setUsername,
         meetingCode, setMeetingCode
@@ -52,7 +49,7 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
     const [chatLog, setChatLog] = useState<MessageProps[]>([])
     const [isStreaming, setIsStreaming] = useState<boolean>(false)
     const [muteStream, setMuteStream] = useState<boolean>(false)
-    const [stream, setStream] = useState<MediaStream>(new MediaStream())
+    const [stream, setStream] = useState<MediaStream | undefined>(undefined)
     const [isAnnotating, setIsAnnotating] = useState<boolean>(false)
     const [activePopup, setActivePopup] = useState<string>("")
     const [newMessage, setNewMessage] = useState<boolean>(false)
@@ -65,23 +62,6 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
             redirect("/", RedirectType.replace) //? Redirect client to the landing page if their credentials are not valid
         }
     }, [username, setUsername, meetingCode, setMeetingCode])
-    /* ------ PEER HANDLING ----- */
-    useEffect(() => {
-        //* PEER INITIALIZATION
-        fetch("/api/server", {
-            method: "GET",
-            cache: "no-store"
-        }).then(res => res.text()).then(res => {
-            try {
-                const { IP, PORT } = JSON.parse(res)
-                const peer = new Peer(socketID, {
-                    host: IP,
-                    port: PORT + 1
-                })
-                setPeer(peer)
-            } catch (error) { console.log(`Peer Error: ${error}`) }
-        })
-    }, [socket, socketID, meetingCode])
     /* --- SOCKET API HANDLING -- */
     useEffect(() => {
         //* EMIT (REQUEST)
@@ -121,12 +101,11 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
             socket.emit("leave-room", username, meetingCode) //? Leave room from the server
             setUsername("") //? Clear out client info to get access on the landing page
             setMeetingCode("") //? Clear out client info to get access on the landing page
-            peer.disconnect()
             redirect("/", RedirectType.replace) //? Redirect client to the landing page
         }
-    }, [clientLeaved, socket, peer, username, meetingCode, setUsername, setMeetingCode])
+    }, [clientLeaved, socket, username, meetingCode, setUsername, setMeetingCode])
     useEffect(() => {
-        if (isStreaming) {
+        if (isStreaming && stream) {
             stream.getTracks().forEach(track => { //? Stop Sharing Popup Handler
                 track.addEventListener("ended", () => {
                     setStream(new MediaStream())
@@ -162,7 +141,6 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
     }, [isStreaming, stream])
     /* -------- RENDERING ------- */
     return <SessionContext.Provider value={{
-        peer: peer,
         isHost: isHost,
         streamRequest: streamRequest,
         streamAccess: streamAccess, setStreamAccess,

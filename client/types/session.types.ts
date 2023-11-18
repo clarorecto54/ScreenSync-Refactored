@@ -1,9 +1,7 @@
 import { Dispatch, SetStateAction, MutableRefObject, LegacyRef } from "react"
 import { ParticipantsProps } from "./lobby.types"
-import Peer from "peerjs"
 /* -------- INTERFACE ------- */
 export interface SessionProps {
-    peer: Peer
     isHost: boolean
     streamRequest: {
         id: string;
@@ -19,8 +17,8 @@ export interface SessionProps {
     setIsStreaming: Dispatch<SetStateAction<boolean>>
     muteStream: boolean
     setMuteStream: Dispatch<SetStateAction<boolean>>
-    stream: MediaStream
-    setStream: Dispatch<SetStateAction<MediaStream>>
+    stream: MediaStream | undefined
+    setStream: Dispatch<SetStateAction<MediaStream | undefined>>
     isAnnotating: boolean
     setIsAnnotating: Dispatch<SetStateAction<boolean>>
     activePopup: string
