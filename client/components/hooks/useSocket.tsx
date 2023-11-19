@@ -35,16 +35,6 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         const socket = io(server)
         setSocket(socket)
         setSocketID(socket.id)
-        import("peerjs").then(({ default: Peer }) => {
-            if (socket.id) { //? Make sure there's a socket id that the peer can use
-                console.log(socket.id)
-                setPeer(new Peer(socket.id, {
-                    path: "/",
-                    host: peerConfig.IP,
-                    port: peerConfig.PORT + 1
-                }))
-            }
-        })
         /* ------ API HANDLING ------ */
         //* EMIT (REQUEST)
         socket.emit("req-address")
@@ -57,6 +47,20 @@ export function SocketProvider({ children }: { children: ReactNode }) {
             socket.disconnect()
         }
     }, [server])
+    useEffect(() => {
+        if (socket.id) {
+            setSocketID(socket.id)
+            import("peerjs").then(({ default: Peer }) => {
+                if (socketID) { //? Make sure there's a socket id that the peer can use
+                    setPeer(new Peer(socketID, {
+                        path: "/",
+                        host: peerConfig.IP,
+                        port: peerConfig.PORT + 1
+                    }))
+                }
+            })
+        }
+    }, [socket, isConnected, socketID])
     /* -------- RENDERING ------- */
     return <SocketContext.Provider value={{
         peer: peer,

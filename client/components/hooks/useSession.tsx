@@ -5,9 +5,12 @@ import { useGlobals } from "./useGlobals"
 import { redirect, RedirectType } from "next/navigation"
 import { ParticipantsProps } from "@/types/lobby.types"
 import { useSocket } from "./useSocket"
-// TODO PUT THE STREAM ON THE PEER FOR RTC
+import { MediaConnection } from "peerjs"
+// TODO fix can't join stream for the late comer
 /* --------- CONTEXT -------- */
 const SessionContext = createContext<SessionProps>({
+    isViewer: false,
+    setIsViewer: () => { },
     isHost: false,
     streamRequest: { id: "", name: "" },
     streamAccess: false,
@@ -29,18 +32,23 @@ const SessionContext = createContext<SessionProps>({
     newMessage: false,
     setNewMessage: () => { },
     clientLeaved: false,
-    setClientLeaved: () => { }
+    setClientLeaved: () => { },
+    singleCall: undefined,
+    setSingleCall: () => { },
+    peerCall: [],
+    setPeerCall: () => { },
 })
 /* ------- CUSTOM HOOK ------ */
 export function useSession() { return useContext(SessionContext) }
 /* ---- CONTEXT PROVIDER ---- */
 export function SessionContextProvider({ children }: { children: ReactNode }) {
     /* ----- STATES & HOOKS ----- */
-    const { socket, socketID } = useSocket()
+    const { socket, socketID, peer } = useSocket()
     const {
         username, setUsername,
         meetingCode, setMeetingCode
     } = useGlobals()
+    const [isViewer, setIsViewer] = useState<boolean>(false)
     const [isHost, setIsHost] = useState<boolean>(false)
     const [streamRequest, setStreamRequest] = useState<{ id: string, name: string }>({ id: "", name: "" })
     const [streamAccess, setStreamAccess] = useState<boolean>(false)
@@ -54,6 +62,8 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
     const [activePopup, setActivePopup] = useState<string>("")
     const [newMessage, setNewMessage] = useState<boolean>(false)
     const [clientLeaved, setClientLeaved] = useState<boolean>(false)
+    const [singleCall, setSingleCall] = useState<MediaConnection | undefined>(undefined)
+    const [peerCall, setPeerCall] = useState<MediaConnection[]>([])
     /* ---- SESSION VALIDATOR --- */
     useEffect(() => {
         if (!username || username.length < 4 || !meetingCode || (meetingCode !== window.location.pathname.replace("/", ""))) {
@@ -69,6 +79,23 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         socket.emit("get-chatLog", meetingCode) //? Get room's chat log
         socket.emit("get-participant-list") //? Get participant list
         //* ON (RESPONSE)
+        socket.on("late-comer", (joinerID) => {
+            if (peer && stream) {
+                setPeerCall(prevCall => [...prevCall, peer.call(joinerID, stream)])
+                socket.emit("change-stream-status", meetingCode, true)
+            }
+        })
+        socket.on("view-status", (streamStatus: boolean) => {
+            if (streamStatus) { //? If someone is streaming
+                setIsViewer(true)
+            } else { //? If no one is streaming
+                if (stream) { stream.getTracks().forEach(track => track.stop()) }
+                setIsViewer(false)
+                setIsStreaming(false)
+                setStream(undefined)
+                setStreamAccess(false)
+            }
+        })
         socket.on("get-stream-access", (id: string, username: string) => {
             setStreamRequest({ id: id, name: username })
             setActivePopup("System Access")
@@ -92,20 +119,58 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
             setActivePopup("System Kick")
         })
         socket.on("host-authority", () => setIsHost(true))
-    }, [socket, meetingCode, activePopup, username])
+    }, [socket, meetingCode, activePopup, username, stream])
+    /* ------ PEER HANDLING ----- */
+    useEffect(() => {
+        peer?.on("call", call => {
+            setSingleCall(call)
+            call.answer()
+            call.on("stream", livestream => {
+                console.log("Get Stream Success")
+                livestream.getTracks().forEach(track => {
+                    track.addEventListener("ended", () => {
+                        setIsViewer(false)
+                        setStream(undefined)
+                        setIsStreaming(false)
+                        setStreamAccess(false)
+                    })
+                })
+                setIsViewer(true)
+                setStream(livestream)
+                setIsStreaming(true)
+            })
+            call.on("close", () => {
+                setIsViewer(false)
+                setStream(undefined)
+                setIsStreaming(false)
+                setStreamAccess(false)
+            })
+        })
+    }, [peer])
     /* ------ EVENT HANDLER ----- */
     useEffect(() => {
         if (clientLeaved) {
-            setStream(new MediaStream())
+            if (peerCall.length > 0 && (isHost || streamAccess)) {
+                socket.emit("change-stream-status", meetingCode, false)
+                peerCall.forEach(call => call.close())
+            }
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop())
+            }
+            if (isStreaming && (isHost || streamAccess)) {
+                socket.emit("change-stream-status", meetingCode, false)
+            }
+            setStream(undefined)
             setIsStreaming(false)
             socket.emit("leave-room", username, meetingCode) //? Leave room from the server
             setUsername("") //? Clear out client info to get access on the landing page
             setMeetingCode("") //? Clear out client info to get access on the landing page
             redirect("/", RedirectType.replace) //? Redirect client to the landing page
         }
-    }, [clientLeaved, socket, username, meetingCode, setUsername, setMeetingCode])
+    }, [clientLeaved, socket, username, meetingCode, peerCall, stream, setUsername, setMeetingCode, streamAccess])
     /* -------- RENDERING ------- */
     return <SessionContext.Provider value={{
+        isViewer: isViewer, setIsViewer,
         isHost: isHost,
         streamRequest: streamRequest,
         streamAccess: streamAccess, setStreamAccess,
@@ -118,7 +183,9 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         isAnnotating: isAnnotating, setIsAnnotating,
         activePopup: activePopup, setActivePopup,
         newMessage: newMessage, setNewMessage,
-        clientLeaved: clientLeaved, setClientLeaved
+        clientLeaved: clientLeaved, setClientLeaved,
+        singleCall: singleCall, setSingleCall,
+        peerCall: peerCall, setPeerCall,
     }}>
         {children}
     </SessionContext.Provider>

@@ -1,7 +1,10 @@
 import { Dispatch, SetStateAction, MutableRefObject, LegacyRef } from "react"
 import { ParticipantsProps } from "./lobby.types"
+import { MediaConnection } from "peerjs";
 /* -------- INTERFACE ------- */
 export interface SessionProps {
+    isViewer: boolean
+    setIsViewer: Dispatch<SetStateAction<boolean>>
     isHost: boolean
     streamRequest: {
         id: string;
@@ -27,6 +30,10 @@ export interface SessionProps {
     setNewMessage: Dispatch<SetStateAction<boolean>>
     clientLeaved: boolean
     setClientLeaved: Dispatch<SetStateAction<boolean>>
+    singleCall: MediaConnection | undefined
+    setSingleCall: Dispatch<SetStateAction<MediaConnection | undefined>>
+    peerCall: MediaConnection[]
+    setPeerCall: Dispatch<SetStateAction<MediaConnection[]>>
 }
 export interface MessageProps {
     sender: string

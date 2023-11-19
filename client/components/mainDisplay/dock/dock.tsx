@@ -7,10 +7,11 @@ import { useGlobals } from "@/components/hooks/useGlobals"
 export default function Dock() {
     /* ----- STATES & HOOKS ----- */
     const { username, meetingCode } = useGlobals()
-    const { socket, peer } = useSocket()
+    const { socket, socketID, peer } = useSocket()
     const {
         setClientLeaved,
-        isHost, stream,
+        isHost, stream, isViewer, participantList,
+        peerCall, setPeerCall,
         streamAccess, setStreamAccess,
         isStreaming, setIsStreaming,
         muteStream, setMuteStream,
@@ -19,7 +20,7 @@ export default function Dock() {
     /* -------- RENDERING ------- */
     return <div //* APP DOCK
         className="flex gap-[16px] justify-center items-center">
-        {(isStreaming || streamAccess) && <Button //* ANNOTATION
+        {((!isViewer && isStreaming && (streamAccess || isHost))) && <Button //* ANNOTATION
             circle useIcon iconSrc="/[Icon] Annotations.png" iconOverlay
             className={classMerge(
                 "bg-[#525252]", //? Background
@@ -46,8 +47,8 @@ export default function Dock() {
                 "bg-[#525252]", //? Background
                 "hover:bg-[#646464]", //? Hover
             )} />}
-        <Button //* SHARE SCREEN
-            circle useIcon iconOverlay // TODO DISABLE THIS BUTTON WHEN HOST IS STREAMING
+        {(!isViewer || isHost) && <Button //* SHARE SCREEN
+            circle useIcon iconOverlay
             iconSrc={isStreaming ? "/[Icon] Share Screen (1).png" : "/[Icon] Share Screen (2).png"}
             customOverlay={(isStreaming || (!isHost && !streamAccess)) ? "redOverlay" : undefined}
             onClick={async () => {
@@ -58,13 +59,6 @@ export default function Dock() {
                             video: { displaySurface: "browser" },
                         }).then(mediaStream => {
                             //* STREAM MODIFICATION
-                            mediaStream.getTracks().forEach(track => {
-                                track.addEventListener("ended", () => { //? End streaming onClick of "stop sharing" modal
-                                    setStream(new MediaStream())
-                                    setIsStreaming(false)
-                                    setStreamAccess(false)
-                                })
-                            })
                             mediaStream.getTracks().forEach(track => { //? Track Modifications
                                 track.applyConstraints({
                                     frameRate: { min: 60, max: 144, ideal: 144 },
@@ -90,12 +84,32 @@ export default function Dock() {
                                 })
                             })
                             /* -------------------------- */
+                            participantList.forEach(participant => {
+                                if (participant.socketID !== socketID) {
+                                    setPeerCall(prevCall => [...prevCall, peer.call(participant.socketID, mediaStream)])
+                                }
+                            })
+                            socket.emit("change-stream-status", meetingCode, true)
                             setIsStreaming(true) //? Start streaming
-                            setStream(mediaStream) //? Set the stream scope to the page
+                            setStream(() => { //? Set the stream scope to the page
+                                mediaStream.getTracks().forEach(track => { //? Streamer "stop sharing" modal behavior
+                                    track.addEventListener("ended", () => { //? End streaming onClick of "stop sharing" modal
+                                        socket.emit("change-stream-status", meetingCode, false)
+                                        setIsStreaming(false)
+                                        setStream(undefined)
+                                        setStreamAccess(false)
+                                    })
+                                })
+                                return mediaStream
+                            })
                         })
                     } else { //? Stop Streaming
+                        socket.emit("change-stream-status", meetingCode, false)
+                        if (peerCall.length > 0) {
+                            peerCall.forEach(call => call.close())
+                        }
                         stream?.getTracks().forEach(track => track.stop()) //? Removes the "stop sharing" modal
-                        setStream(new MediaStream())
+                        setStream(undefined)
                         setIsStreaming(false)
                         setStreamAccess(false)
                     }
@@ -106,7 +120,7 @@ export default function Dock() {
             className={classMerge(
                 "bg-[#525252]", //? Background
                 "hover:bg-[#646464]", //? Hover
-            )} />
+            )} />}
         <Button //* END CALL
             onClick={() => setClientLeaved(true)}
             circle useIcon iconSrc="/[Icon] End Call.png" iconOverlay
