@@ -68,7 +68,8 @@ export default function FormMenu() {
                             name: username,
                             socketID: socketID
                         }],
-                        chatLog: []
+                        chatLog: [],
+                        streamStatus: { isStreaming: false, streamerID: "" }
                     }
                     socket.emit("create-meeting", data)
                     setMeetingCode(generatedCode)

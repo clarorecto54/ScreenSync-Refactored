@@ -15,6 +15,7 @@ export interface RoomInfo {
     meetingKey: string
     participants: ParticipantsProps[]
     chatLog: MessageProps[]
+    streamStatus: { isStreaming: boolean, streamerID: string }
 }
 export interface LobbyProps {
     searchRoom: string
