@@ -7,7 +7,7 @@ import { useGlobals } from "@/components/hooks/useGlobals"
 export default function Dock() {
     /* ----- STATES & HOOKS ----- */
     const { username, meetingCode } = useGlobals()
-    const { socket } = useSocket()
+    const { socket, peer } = useSocket()
     const {
         setClientLeaved,
         isHost, stream,
@@ -52,15 +52,49 @@ export default function Dock() {
             customOverlay={(isStreaming || (!isHost && !streamAccess)) ? "redOverlay" : undefined}
             onClick={async () => {
                 if (isHost || streamAccess) {
-                    if (!isStreaming && navigator.mediaDevices.getDisplayMedia) { //? Start Streaming
+                    if (!isStreaming && peer && navigator.mediaDevices.getDisplayMedia) { //? Start Streaming
                         await navigator.mediaDevices.getDisplayMedia({
                             audio: true,
                             video: { displaySurface: "browser" },
                         }).then(mediaStream => {
+                            //* STREAM MODIFICATION
+                            mediaStream.getTracks().forEach(track => {
+                                track.addEventListener("ended", () => { //? End streaming onClick of "stop sharing" modal
+                                    setStream(new MediaStream())
+                                    setIsStreaming(false)
+                                    setStreamAccess(false)
+                                })
+                            })
+                            mediaStream.getTracks().forEach(track => { //? Track Modifications
+                                track.applyConstraints({
+                                    frameRate: { min: 60, max: 144, ideal: 144 },
+                                    channelCount: 1,
+                                    noiseSuppression: true,
+                                    echoCancellation: true,
+                                    sampleRate: { min: 44100, max: 192000, ideal: 88200 },
+                                    sampleSize: { min: 16, max: 24, ideal: 24 }
+                                })
+                            })
+                            mediaStream.getVideoTracks().forEach(video => { //? Video Modifications
+                                video.applyConstraints({
+                                    frameRate: { min: 60, max: 144, ideal: 144 }
+                                })
+                            })
+                            mediaStream.getAudioTracks().forEach(audio => { //? Audio Modifications
+                                audio.applyConstraints({
+                                    channelCount: 1,
+                                    noiseSuppression: true,
+                                    echoCancellation: true,
+                                    sampleRate: { min: 44100, max: 192000, ideal: 88200 },
+                                    sampleSize: { min: 16, max: 24, ideal: 24 }
+                                })
+                            })
+                            /* -------------------------- */
                             setIsStreaming(true) //? Start streaming
                             setStream(mediaStream) //? Set the stream scope to the page
                         })
                     } else { //? Stop Streaming
+                        stream?.getTracks().forEach(track => track.stop()) //? Removes the "stop sharing" modal
                         setStream(new MediaStream())
                         setIsStreaming(false)
                         setStreamAccess(false)

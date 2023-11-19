@@ -104,41 +104,6 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
             redirect("/", RedirectType.replace) //? Redirect client to the landing page
         }
     }, [clientLeaved, socket, username, meetingCode, setUsername, setMeetingCode])
-    useEffect(() => {
-        if (isStreaming && stream) {
-            stream.getTracks().forEach(track => { //? Stop Sharing Popup Handler
-                track.addEventListener("ended", () => {
-                    setStream(new MediaStream())
-                    setIsStreaming(false)
-                    setStreamAccess(false)
-                })
-            })
-            stream.getTracks().forEach(track => { //? Track Modifications
-                track.applyConstraints({
-                    frameRate: { min: 60, max: 144, ideal: 144 },
-                    channelCount: 1,
-                    noiseSuppression: true,
-                    echoCancellation: true,
-                    sampleRate: { min: 44100, max: 192000, ideal: 88200 },
-                    sampleSize: { min: 16, max: 24, ideal: 24 }
-                })
-            })
-            stream.getVideoTracks().forEach(video => { //? Video Modifications
-                video.applyConstraints({
-                    frameRate: { min: 60, max: 144, ideal: 144 }
-                })
-            })
-            stream.getAudioTracks().forEach(audio => { //? Audio Modifications
-                audio.applyConstraints({
-                    channelCount: 1,
-                    noiseSuppression: true,
-                    echoCancellation: true,
-                    sampleRate: { min: 44100, max: 192000, ideal: 88200 },
-                    sampleSize: { min: 16, max: 24, ideal: 24 }
-                })
-            })
-        }
-    }, [isStreaming, stream])
     /* -------- RENDERING ------- */
     return <SessionContext.Provider value={{
         isHost: isHost,
