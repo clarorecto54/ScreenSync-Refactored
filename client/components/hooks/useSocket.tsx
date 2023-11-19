@@ -36,11 +36,14 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         setSocket(socket)
         setSocketID(socket.id)
         import("peerjs").then(({ default: Peer }) => {
-            setPeer(new Peer(socket.id, {
-                path: "/",
-                host: peerConfig.IP,
-                port: peerConfig.PORT + 1
-            }))
+            if (socket.id) { //? Make sure there's a socket id that the peer can use
+                console.log(socket.id)
+                setPeer(new Peer(socket.id, {
+                    path: "/",
+                    host: peerConfig.IP,
+                    port: peerConfig.PORT + 1
+                }))
+            }
         })
         /* ------ API HANDLING ------ */
         //* EMIT (REQUEST)
