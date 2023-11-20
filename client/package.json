@@ -3,10 +3,11 @@
   "version": "7.13.23 ( Beta 1 )",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --experimental-https",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "https-server": "node https-server.js"
   },
   "dependencies": {
     "@types/peerjs": "^1.1.0",

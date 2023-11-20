@@ -30,7 +30,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
         }).then(res => res.text()).then(res => {
             const { IP, PORT } = JSON.parse(res)
             setPeerConfig({ IP, PORT })
-            setServer(`http://${IP}:${PORT}`)
+            setServer(`https://${IP}:${PORT}`)
         })
         const socket = io(server)
         setSocket(socket)
@@ -47,6 +47,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
             socket.disconnect()
         }
     }, [server])
+    /* ------ PEER HANDLING ----- */
     useEffect(() => {
         if (socket.id) {
             setSocketID(socket.id)
@@ -55,7 +56,8 @@ export function SocketProvider({ children }: { children: ReactNode }) {
                     setPeer(new Peer(socketID, {
                         path: "/",
                         host: peerConfig.IP,
-                        port: peerConfig.PORT + 1
+                        port: peerConfig.PORT + 1,
+                        secure: true,
                     }))
                 }
             })
