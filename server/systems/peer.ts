@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { RoomList } from "../server";
-
+import { io } from "../server";
 export default function PeerSystem(socket: Socket) {
     socket.on("change-stream-status", (meetingCode: string, isStreaming: boolean) => {
         RoomList.forEach(room => {
@@ -16,5 +16,8 @@ export default function PeerSystem(socket: Socket) {
             }
             return
         })
+    })
+    socket.on("late-comer", lateID => {
+        io.local.to(lateID).emit("view-status", true) //? Let the late comer knows that there's someone streaming
     })
 }

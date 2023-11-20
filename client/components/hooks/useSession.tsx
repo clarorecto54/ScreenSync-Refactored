@@ -81,7 +81,7 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         socket.on("late-comer", (joinerID) => {
             if (peer && stream) {
                 setPeerCall(prevCall => [...prevCall, peer.call(joinerID, stream)])
-                socket.emit("change-stream-status", meetingCode, true)
+                socket.emit("late-comer", joinerID)
             }
         })
         socket.on("view-status", (streamStatus: boolean) => {

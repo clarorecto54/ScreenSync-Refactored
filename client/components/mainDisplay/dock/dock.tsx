@@ -74,12 +74,19 @@ export default function Dock() {
                         for (const video of originalStream.getVideoTracks()) {
                             await video.applyConstraints({
                                 displaySurface: "window",
-                                frameRate: { min: 60, max: 144, ideal: 144 }
+                                frameRate: { min: 60, max: 144, ideal: 144 },
+                                channelCount: 1,
+                                noiseSuppression: true,
+                                echoCancellation: true,
+                                sampleRate: { min: 44100, max: 192000, ideal: 88200 },
+                                sampleSize: { min: 16, max: 24, ideal: 24 }
                             }).then(() => { return })
                         }
                         //* AUDIO MODIFICATION
                         for (const audio of originalStream.getAudioTracks()) {
                             audio.applyConstraints({
+                                displaySurface: "window",
+                                frameRate: { min: 60, max: 144, ideal: 144 },
                                 channelCount: 1,
                                 noiseSuppression: true,
                                 echoCancellation: true,
