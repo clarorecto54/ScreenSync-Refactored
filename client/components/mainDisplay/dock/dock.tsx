@@ -54,54 +54,57 @@ export default function Dock() {
             onClick={async () => {
                 if (isHost || streamAccess) {
                     if (!isStreaming && peer && navigator.mediaDevices.getDisplayMedia) { //? Start Streaming
-                        await navigator.mediaDevices.getDisplayMedia({
+                        const originalStream = await navigator.mediaDevices.getDisplayMedia({
                             audio: true,
-                            video: { displaySurface: "browser" },
-                        }).then(mediaStream => {
-                            //* STREAM MODIFICATION
-                            mediaStream.getTracks().forEach(track => { //? Track Modifications
-                                track.applyConstraints({
-                                    frameRate: { min: 60, max: 144, ideal: 144 },
-                                    channelCount: 1,
-                                    noiseSuppression: true,
-                                    echoCancellation: true,
-                                    sampleRate: { min: 44100, max: 192000, ideal: 88200 },
-                                    sampleSize: { min: 16, max: 24, ideal: 24 }
+                            video: true,
+                        })
+                        //* TRACK MODIFICATION
+                        for (const track of originalStream.getTracks()) {
+                            track.applyConstraints({
+                                displaySurface: "window",
+                                frameRate: { min: 60, max: 144, ideal: 144 },
+                                channelCount: 1,
+                                noiseSuppression: true,
+                                echoCancellation: true,
+                                sampleRate: { min: 44100, max: 192000, ideal: 88200 },
+                                sampleSize: { min: 16, max: 24, ideal: 24 }
+                            }).then(() => { return })
+                        }
+                        //* VIDEO MODIFICATION
+                        for (const video of originalStream.getVideoTracks()) {
+                            await video.applyConstraints({
+                                displaySurface: "window",
+                                frameRate: { min: 60, max: 144, ideal: 144 }
+                            }).then(() => { return })
+                        }
+                        //* AUDIO MODIFICATION
+                        for (const audio of originalStream.getAudioTracks()) {
+                            audio.applyConstraints({
+                                channelCount: 1,
+                                noiseSuppression: true,
+                                echoCancellation: true,
+                                sampleRate: { min: 44100, max: 192000, ideal: 88200 },
+                                sampleSize: { min: 16, max: 24, ideal: 24 }
+                            }).then(() => { return })
+                        }
+                        participantList.forEach(participant => { //? Send stream to all participants
+                            if (participant.socketID !== socketID) {
+                                setPeerCall(prevCall => [...prevCall, peer.call(participant.socketID, originalStream)])
+                            }
+                        })
+                        socket.emit("change-stream-status", meetingCode, true) //? Update steraming status in server
+                        setIsStreaming(true) //? Start streaming
+                        setStream(() => { //? Set the stream scope to the page
+                            originalStream.getTracks().forEach(track => { //? Streamer "stop sharing" modal behavior
+                                track.addEventListener("ended", () => { //? End streaming onClick of "stop sharing" modal
+                                    socket.emit("change-stream-status", meetingCode, false)
+                                    setIsStreaming(false)
+                                    setStream(undefined)
+                                    setStreamAccess(false)
                                 })
                             })
-                            mediaStream.getVideoTracks().forEach(video => { //? Video Modifications
-                                video.applyConstraints({
-                                    frameRate: { min: 60, max: 144, ideal: 144 }
-                                })
-                            })
-                            mediaStream.getAudioTracks().forEach(audio => { //? Audio Modifications
-                                audio.applyConstraints({
-                                    channelCount: 1,
-                                    noiseSuppression: true,
-                                    echoCancellation: true,
-                                    sampleRate: { min: 44100, max: 192000, ideal: 88200 },
-                                    sampleSize: { min: 16, max: 24, ideal: 24 }
-                                })
-                            })
-                            /* -------------------------- */
-                            participantList.forEach(participant => {
-                                if (participant.socketID !== socketID) {
-                                    setPeerCall(prevCall => [...prevCall, peer.call(participant.socketID, mediaStream)])
-                                }
-                            })
-                            socket.emit("change-stream-status", meetingCode, true)
-                            setIsStreaming(true) //? Start streaming
-                            setStream(() => { //? Set the stream scope to the page
-                                mediaStream.getTracks().forEach(track => { //? Streamer "stop sharing" modal behavior
-                                    track.addEventListener("ended", () => { //? End streaming onClick of "stop sharing" modal
-                                        socket.emit("change-stream-status", meetingCode, false)
-                                        setIsStreaming(false)
-                                        setStream(undefined)
-                                        setStreamAccess(false)
-                                    })
-                                })
-                                return mediaStream
-                            })
+                            setMuteStream(true)
+                            return originalStream
                         })
                     } else { //? Stop Streaming
                         socket.emit("change-stream-status", meetingCode, false)

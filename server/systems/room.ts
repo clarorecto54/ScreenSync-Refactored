@@ -50,7 +50,6 @@ export function RoomSystem(socket: Socket) {
                     socketID: socket.id
                 })
                 if (room.streamStatus.isStreaming) { //? If someone is streaming
-                    console.log("Late comer spotted")
                     setTimeout(() => {
                         io.to(room.streamStatus.streamerID).emit("late-comer", socket.id)
                     }, 500);

@@ -3,8 +3,8 @@ const { parse } = require('url');
 const next = require('next');
 const fs = require('fs');
 /* ---- PRODUCTION BUILD ---- */
-const dev = process.env.NODE_ENV === 'production';
-const app = next({ dev });
+const start = process.env.NODE_ENV === 'production';
+const app = next({ start });
 const handle = app.getRequestHandler();
 /* ----- HTTPS HANDLING ----- */
 const httpsOptions = {
@@ -18,6 +18,7 @@ app.prepare().then(() => {
         handle(req, res, parsedUrl);
     }).listen(3000, (err) => {
         if (err) throw err;
-        console.log('Server running on https://localhost:3000');
+        const { IP, PORT } = require("./server.json")
+        console.log(`Server running on https://${IP}:3000`);
     });
 });

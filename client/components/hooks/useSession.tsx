@@ -6,7 +6,6 @@ import { redirect, RedirectType } from "next/navigation"
 import { ParticipantsProps } from "@/types/lobby.types"
 import { useSocket } from "./useSocket"
 import { MediaConnection } from "peerjs"
-// TODO fix can't join stream for the late comer
 /* --------- CONTEXT -------- */
 const SessionContext = createContext<SessionProps>({
     isViewer: false,
@@ -87,6 +86,7 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         })
         socket.on("view-status", (streamStatus: boolean) => {
             if (streamStatus) { //? If someone is streaming
+                setMuteStream(false)
                 setIsViewer(true)
             } else { //? If no one is streaming
                 if (stream) { stream.getTracks().forEach(track => track.stop()) }
@@ -119,14 +119,13 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
             setActivePopup("System Kick")
         })
         socket.on("host-authority", () => setIsHost(true))
-    }, [socket, meetingCode, activePopup, username, stream])
+    }, [socket, meetingCode, activePopup, username, stream, peer])
     /* ------ PEER HANDLING ----- */
     useEffect(() => {
         peer?.on("call", call => {
             setSingleCall(call)
             call.answer()
             call.on("stream", livestream => {
-                console.log("Get Stream Success")
                 livestream.getTracks().forEach(track => {
                     track.addEventListener("ended", () => {
                         setIsViewer(false)
@@ -167,7 +166,7 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
             setMeetingCode("") //? Clear out client info to get access on the landing page
             redirect("/", RedirectType.replace) //? Redirect client to the landing page
         }
-    }, [clientLeaved, socket, username, meetingCode, peerCall, stream, setUsername, setMeetingCode, streamAccess])
+    }, [clientLeaved, socket, username, meetingCode, peerCall, stream, setUsername, setMeetingCode, streamAccess, isHost, isStreaming])
     /* -------- RENDERING ------- */
     return <SessionContext.Provider value={{
         isViewer: isViewer, setIsViewer,
