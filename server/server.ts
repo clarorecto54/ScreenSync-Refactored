@@ -1,7 +1,7 @@
 /* -------- LIBRARIES ------- */
-import { createServer } from "http"
+import { createServer } from "https"
 import { Server } from "socket.io"
-import { writeFileSync } from "fs"
+import { readFileSync, writeFileSync } from "fs"
 import { RoomSystem } from "./systems/room"
 import { RoomInfo } from "./typings/room.typings"
 import { PeerServer } from "peer"
@@ -38,9 +38,17 @@ try {
     writeFileSync("../client//server.json", JSON.stringify(config, null, 2), "utf-8") //? Export the server config to JSON
 }
 /* ------- SERVER INIT ------ */
-const httpServer = createServer(require("express")())
-export const io = new Server(httpServer, { cors: { origin: "*" } });
+const httpsServer = createServer({
+    cert: readFileSync("./SSL/server.crt", "utf-8"),
+    key: readFileSync("./SSL/server.key", "utf-8")
+}, require("express")())
+export const io = new Server(httpsServer, { cors: { origin: "*" } });
 export const peer = PeerServer({
+    proxied: true,
+    ssl: {
+        cert: readFileSync("./SSL/server.crt", "utf-8"),
+        key: readFileSync("./SSL/server.key", "utf-8")
+    },
     allow_discovery: true,
     port: config.PORT + 1,
     path: "/"
@@ -133,11 +141,11 @@ peer.on("disconnect", (client) => {
     ServerLog("peer", `Client Disconnected: ${client.getId()}`)
 })
 /* - EXPRESS INITIALIZATION - */
-httpServer.listen(
+httpsServer.listen(
     config.PORT,
     () => {
         console.clear() //? Clear the log
-        console.log(`[ ${TimeLog(true)} ][ SOCKET RUNNING ] http://${config.IP}:${config.PORT}`)
-        console.log(`[ ${TimeLog(true)} ][ PEER RUNNING ] http://${config.IP}:${config.PORT + 1}`)
+        console.log(`[ ${TimeLog(true)} ][ SOCKET RUNNING ] https://${config.IP}:${config.PORT}`)
+        console.log(`[ ${TimeLog(true)} ][ PEER RUNNING ] https://${config.IP}:${config.PORT + 1}`)
     }
 )
