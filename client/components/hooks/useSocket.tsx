@@ -1,7 +1,7 @@
 "use client"
 import { SocketProps } from "@/types/socket.types";
 import Peer from "peerjs";
-import { ReactNode, createContext, useEffect, useState, useContext } from "react";
+import { ReactNode, createContext, useEffect, useState, useContext, useRef } from "react";
 import { Socket, io } from "socket.io-client"
 /* --------- CONTEXT -------- */
 const SocketContext = createContext<SocketProps>({
@@ -22,6 +22,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     const [socketID, setSocketID] = useState<string>("")
     const [IPv4, setIPv4] = useState<string>("")
     const [isConnected, setIsConneted] = useState<boolean>(false)
+    const prevPeerConfig = useRef<{ IP: string; PORT: number }>({ IP: "", PORT: 0 })
     /* ----- SOCKET HANDLING ---- */
     useEffect(() => {
         fetch("/api/server", {
@@ -49,10 +50,17 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     }, [server])
     /* ------ PEER HANDLING ----- */
     useEffect(() => {
+        if (
+            prevPeerConfig.current.IP !== peerConfig.IP ||
+            prevPeerConfig.current.PORT !== peerConfig.PORT ||
+            socket.id !== socketID
+        ) {
+            prevPeerConfig.current = { IP: peerConfig.IP, PORT: peerConfig.PORT }
+        }
         if (socket.id) {
             setSocketID(socket.id)
             import("peerjs").then(({ default: Peer }) => {
-                if (socketID) { //? Make sure there's a socket id that the peer can use
+                if (socketID && peerConfig.IP && peerConfig.PORT) { //? Make sure there's a socket id that the peer can use
                     setPeer(new Peer(socketID, {
                         path: "/",
                         host: peerConfig.IP,
@@ -62,7 +70,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
                 }
             })
         }
-    }, [socket, isConnected, socketID])
+    }, [socket, isConnected, socketID, peerConfig.IP, peerConfig.PORT])
     /* -------- RENDERING ------- */
     return <SocketContext.Provider value={{
         peer: peer,
