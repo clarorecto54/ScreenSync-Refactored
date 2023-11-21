@@ -1,3 +1,5 @@
 @echo off
 REM Run client scripts in the background
-start cmd /k "cd .\client && npm run dev --experimental-https"
+cd .\client
+npm run dev --experimental-https
+pause

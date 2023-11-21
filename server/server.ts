@@ -92,12 +92,14 @@ io.on("connection", (socket) => {
     }, 1000)
     ClearInactiveSockets()
     NoEmptyRoom() //? Clears up empty rooms on every connection
+    ServerLog("socket", `Client Connected: ${socket.id}`)
     ServerLog("socket", `Total Client: ${io.sockets.sockets.size}`)
     ServerLog("socket", `Total Room: ${RoomList.length}`)
     //* CLIENT DISCONNECTION
     socket.on("disconnect", () => {
         ClearInactiveSockets()
         NoEmptyRoom() //? Clears up empty rooms on every disconnection
+        ServerLog("socket", `Client Disnnected: ${socket.id}`)
         ServerLog("socket", `Total Client: ${io.sockets.sockets.size}`)
         ServerLog("socket", `Total Room: ${RoomList.length}`)
     })
@@ -132,13 +134,13 @@ io.on("connection", (socket) => {
 var totalPeers: number = 0
 peer.on("connection", (client) => {
     totalPeers += 1
-    ServerLog("peer", `Total Client: ${totalPeers}`)
     ServerLog("peer", `Client Connected: ${client.getId()}`)
+    ServerLog("peer", `Total Client: ${totalPeers}`)
 })
 peer.on("disconnect", (client) => {
     totalPeers -= 1
-    ServerLog("peer", `Total Client: ${totalPeers}`)
     ServerLog("peer", `Client Disconnected: ${client.getId()}`)
+    ServerLog("peer", `Total Client: ${totalPeers}`)
 })
 /* - EXPRESS INITIALIZATION - */
 httpsServer.listen(
