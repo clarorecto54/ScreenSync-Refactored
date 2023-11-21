@@ -25,6 +25,8 @@ const SessionContext = createContext<SessionProps>({
     setMuteStream: () => { },
     stream: undefined,
     setStream: () => { },
+    fullscreen: false,
+    setFullscreen: () => { },
     isAnnotating: false,
     setIsAnnotating: () => { },
     activePopup: "",
@@ -58,6 +60,7 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
     const [isStreaming, setIsStreaming] = useState<boolean>(false)
     const [muteStream, setMuteStream] = useState<boolean>(false)
     const [stream, setStream] = useState<MediaStream | undefined>(undefined)
+    const [fullscreen, setFullscreen] = useState<boolean>(false)
     const [isAnnotating, setIsAnnotating] = useState<boolean>(false)
     const [activePopup, setActivePopup] = useState<string>("")
     const [newMessage, setNewMessage] = useState<boolean>(false)
@@ -180,6 +183,7 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         isStreaming: isStreaming, setIsStreaming,
         muteStream: muteStream, setMuteStream,
         stream: stream, setStream,
+        fullscreen: fullscreen, setFullscreen,
         isAnnotating: isAnnotating, setIsAnnotating,
         activePopup: activePopup, setActivePopup,
         newMessage: newMessage, setNewMessage,

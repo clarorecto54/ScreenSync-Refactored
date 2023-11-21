@@ -11,7 +11,7 @@ export default function Dock() {
     const { socket, socketID, peer } = useSocket()
     const {
         setClientLeaved,
-        isHost, stream, isViewer, participantList,
+        isHost, stream, isViewer, participantList, setFullscreen,
         peerCall, setPeerCall,
         streamAccess, setStreamAccess,
         isStreaming, setIsStreaming,
@@ -27,12 +27,13 @@ export default function Dock() {
                 "bg-[#525252]", //? Background
                 "hover:bg-[#646464]", //? Hover
             )} />}
-        <Button //* REACTIONS
-            circle useIcon iconSrc="/[Icon] Reactions 2.png" iconOverlay
+        {(isStreaming && stream && isViewer) && <Button //* FULL SCREEN
+            circle useIcon iconSrc="/[Icon] Fullscreen.png" iconOverlay
+            onClick={() => setFullscreen(true)}
             className={classMerge(
                 "bg-[#525252]", //? Background
                 "hover:bg-[#646464]", //? Hover
-            )} />
+            )} />}
         {!isHost && <Button //* RAISE HAND
             circle useIcon iconSrc="/[Icon] Raise Hand.png" iconOverlay
             className={classMerge(

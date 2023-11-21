@@ -4,7 +4,8 @@ import { useEffect, useRef } from "react"
 export default function StreamDisplay() {
     /* ----- STATES & HOOKS ----- */
     const {
-        isStreaming, stream, muteStream
+        isStreaming, stream, muteStream,
+        fullscreen, setFullscreen
     } = useSession()
     const streamRef = useRef<HTMLVideoElement>(null)
     /* ------ EVENT HANDLER ----- */
@@ -18,7 +19,12 @@ export default function StreamDisplay() {
                 streamRef.current.srcObject = null
             }
         }
-    }, [isStreaming, stream, streamRef])
+        if (fullscreen) {
+            if (streamRef.current) {
+                streamRef.current.requestFullscreen({ navigationUI: "hide" }).then(() => { setFullscreen(false) })
+            }
+        }
+    }, [isStreaming, stream, streamRef, fullscreen, setFullscreen])
     /* -------- RENDERING ------- */
     return <div
         className={classMerge(

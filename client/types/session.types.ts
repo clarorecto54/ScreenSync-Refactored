@@ -22,6 +22,8 @@ export interface SessionProps {
     setMuteStream: Dispatch<SetStateAction<boolean>>
     stream: MediaStream | undefined
     setStream: Dispatch<SetStateAction<MediaStream | undefined>>
+    fullscreen: boolean
+    setFullscreen: Dispatch<SetStateAction<boolean>>
     isAnnotating: boolean
     setIsAnnotating: Dispatch<SetStateAction<boolean>>
     activePopup: string
