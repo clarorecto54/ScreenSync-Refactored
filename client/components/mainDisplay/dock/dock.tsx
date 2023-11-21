@@ -3,6 +3,7 @@ import Button from "@/components/atom/button"
 import { useSession } from "@/components/hooks/useSession"
 import { useSocket } from "@/components/hooks/useSocket"
 import { useGlobals } from "@/components/hooks/useGlobals"
+import { transformSDP } from "@/components/utils.sdp"
 /* ----- MAIN FUNCTIONS ----- */
 export default function Dock() {
     /* ----- STATES & HOOKS ----- */
@@ -62,7 +63,7 @@ export default function Dock() {
                         for (const track of originalStream.getTracks()) {
                             track.applyConstraints({
                                 displaySurface: "window",
-                                frameRate: { min: 60, max: 144, ideal: 144 },
+                                frameRate: { exact: 60 },
                                 channelCount: 1,
                                 noiseSuppression: true,
                                 echoCancellation: true,
@@ -74,7 +75,7 @@ export default function Dock() {
                         for (const video of originalStream.getVideoTracks()) {
                             await video.applyConstraints({
                                 displaySurface: "window",
-                                frameRate: { min: 60, max: 144, ideal: 144 },
+                                frameRate: { exact: 60 },
                                 channelCount: 1,
                                 noiseSuppression: true,
                                 echoCancellation: true,
@@ -86,7 +87,7 @@ export default function Dock() {
                         for (const audio of originalStream.getAudioTracks()) {
                             audio.applyConstraints({
                                 displaySurface: "window",
-                                frameRate: { min: 60, max: 144, ideal: 144 },
+                                frameRate: { exact: 60 },
                                 channelCount: 1,
                                 noiseSuppression: true,
                                 echoCancellation: true,
@@ -96,7 +97,8 @@ export default function Dock() {
                         }
                         participantList.forEach(participant => { //? Send stream to all participants
                             if (participant.socketID !== socketID) {
-                                setPeerCall(prevCall => [...prevCall, peer.call(participant.socketID, originalStream)])
+                                setPeerCall(prevCall => [...prevCall, peer.call(participant.socketID, originalStream
+                                    , { sdpTransform: transformSDP })])
                             }
                         })
                         socket.emit("change-stream-status", meetingCode, true) //? Update steraming status in server
@@ -114,7 +116,6 @@ export default function Dock() {
                             return originalStream
                         })
                     } else { //? Stop Streaming
-                        socket.emit("change-stream-status", meetingCode, false)
                         if (peerCall.length > 0) {
                             peerCall.forEach(call => call.close())
                         }
@@ -122,6 +123,7 @@ export default function Dock() {
                         setStream(undefined)
                         setIsStreaming(false)
                         setStreamAccess(false)
+                        socket.emit("change-stream-status", meetingCode, false)
                     }
                 } else {
                     socket.emit("get-stream-access", username, meetingCode)

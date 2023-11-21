@@ -6,6 +6,7 @@ import { redirect, RedirectType } from "next/navigation"
 import { ParticipantsProps } from "@/types/lobby.types"
 import { useSocket } from "./useSocket"
 import { MediaConnection } from "peerjs"
+import { transformSDP } from "../utils.sdp"
 /* --------- CONTEXT -------- */
 const SessionContext = createContext<SessionProps>({
     isViewer: false,
@@ -124,7 +125,7 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         peer?.on("call", call => {
             setSingleCall(call)
-            call.answer()
+            call.answer(undefined, { sdpTransform: transformSDP })
             call.on("stream", livestream => {
                 livestream.getTracks().forEach(track => {
                     track.addEventListener("ended", () => {
