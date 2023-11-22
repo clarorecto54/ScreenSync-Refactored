@@ -38,36 +38,6 @@
           "codec": "red",
           "rate": 48000,
           "encoding": 2
-        },
-        {
-          "payload": 9,
-          "codec": "G722",
-          "rate": 8000
-        },
-        {
-          "payload": 0,
-          "codec": "PCMU",
-          "rate": 8000
-        },
-        {
-          "payload": 8,
-          "codec": "PCMA",
-          "rate": 8000
-        },
-        {
-          "payload": 13,
-          "codec": "CN",
-          "rate": 8000
-        },
-        {
-          "payload": 110,
-          "codec": "telephone-event",
-          "rate": 48000
-        },
-        {
-          "payload": 126,
-          "codec": "telephone-event",
-          "rate": 8000
         }
       ],
       "fmtp": [
