@@ -1,8 +1,47 @@
 import { write, parse, SessionDescription, MediaAttributes } from "sdp-transform"
 export function transformSDP(sdp: string) {
     const modifiedSDP: SessionDescription = parse(sdp)
-    const quality: number = 1000000 * 100
-    const fps: number = 90
+    const quality: number = 1000000 * 30
+    const fps: number = 60
+    //* INITAITE NEW CODECS
+    const payloads: number[] = []
+    const rtp: MediaAttributes["rtp"] = []
+    const fmtp: MediaAttributes["fmtp"] = []
+    const rtcpfbPayloads: number[] = []
+    //* TEMPLATES
+    const extraConfigs = [
+        "sprop-stereo=1",
+        `x-google-start-bitrate=${(quality / 1000) * 0.25}`,
+        `x-google-max-bitrate=${(quality / 1000) * 0.5}`,
+        "x-google-max-quantization=40",
+        "x-google-min-quantization=10",
+        "x-google-buffer-initial-delay=250",
+    ]
+    function addCODEC(payload: number, codec: string, config: string) {
+        //* CODEC
+        payloads.push(payload) //? Add VP8 Payload Code
+        rtp.push({ payload: payload, codec: codec, rate: 90000 }) //? Codec name
+        fmtp.push({ payload: payload, config: config }) //? Codec config
+        rtcpfbPayloads.push(payload) //? Add the codec payload for acknowledgement config
+        //* RTX
+        payloads.push(payload + 1) //? Add RTX to the payload
+        rtp.push({ payload: payload + 1, codec: "rtx", rate: 90000 }) //? Codec name
+        fmtp.push({ payload: payload + 1, config: `apt==${payload}` }) //? Retransmit to the payload of previous codec
+    }
+    function addRTPRTX(payload: number, codec: string) {
+        //* RTP
+        payloads.push(payload) //? Adds RTP payload into the list of payloads
+        rtp.push({ payload: payload, codec: codec, rate: 90000 }) //? Adds in RTP
+        //* RTX
+        payloads.push(payload + 1) //? Adds payload of RTP Retransmission into the payload list
+        rtp.push({ payload: payload + 1, codec: "rtx", rate: 90000 }) //? Adds the Retransmission to the RTP
+        fmtp.push({ payload: payload + 1, config: `apt=${payload}` }) //? Retransmission of RTP
+    }
+    function addRTPOnly(payload: number, codec: string) {
+        //* RTP ONLY
+        payloads.push(payload) //? Adds payload of RTP into the payload list
+        rtp.push({ payload: payload, codec: codec, rate: 90000 }) //? Adds to the RTP
+    }
     modifiedSDP.media.forEach((media, mediaIndex) => {
         //* MEDIA MODIFICATIONS
         modifiedSDP.media[mediaIndex].bandwidth = [ //? Set the bandwidth
@@ -24,53 +63,48 @@ export function transformSDP(sdp: string) {
                 modifiedSDP.media[mediaIndex].rtp = [] //? Clear out default codecs
                 modifiedSDP.media[mediaIndex].fmtp = [] //? Clear out deafult configs
                 modifiedSDP.media[mediaIndex].rtcpFb = [] //? Clear out acknowledgement
-                //* INITAITE NEW CODECS
-                const payloads: number[] = []
-                const rtp: MediaAttributes["rtp"] = []
-                const fmtp: MediaAttributes["fmtp"] = []
-                const rtcpfbPayloads: number[] = []
-                //* VP8 CODEC (96)
-                payloads.push(96) //? Add VP8 Payload Code
-                rtp.push({ payload: 96, codec: "VP8", rate: 90000 }) //? Codec name
-                fmtp.push({ payload: 96, config: fmtpConfigs("VP8", quality, fps) }) //? Codec config
-                rtcpfbPayloads.push(96) //? Add the codec payload for acknowledgement config
-                //* VP8 RTX (97)
-                payloads.push(97) //? Add RTX to the payload
-                rtp.push({ payload: 97, codec: "rtx", rate: 90000 }) //? Codec name
-                fmtp.push({ payload: 97, config: "apt=96" }) //? Retransmit to the payload of previous codec
-                //* VP9 CODEC (98)
-                payloads.push(98) //? Add VP8 Payload Code
-                rtp.push({ payload: 98, codec: "VP9", rate: 90000 }) //? Codec name
-                fmtp.push({ payload: 98, config: fmtpConfigs("VP9", quality, fps) }) //? Codec config
-                rtcpfbPayloads.push(98) //? Add the codec payload for acknowledgement config
-                //* VP9 RTX (99)
-                payloads.push(99) //? Add RTX to the payload
-                rtp.push({ payload: 99, codec: "rtx", rate: 90000 }) //? Codec name
-                fmtp.push({ payload: 99, config: "apt=98" }) //? Retransmit to the payload of previous codec
-                //* RED [PACKET REDUNDANCY] (100)
-                payloads.push(100) //? Adds red payload into the list of payloads
-                rtp.push({ payload: 100, codec: "red", rate: 90000 }) //? Adds the red in RTP
-                //* ADDING RTX FOR RED (101)
-                payloads.push(101) //? Adds payload of RED Retransmission into the payload list
-                rtp.push({ payload: 101, codec: "rtx", rate: 90000 }) //? Adds the RED's Retransmission to the RTP
-                fmtp.push({ payload: 101, config: "apt=100" }) //? Retransmission of RED
-                //* PACKET ERROR CORRECTION (102)
-                payloads.push(102) //? Adds payload of ULPFEC into the payload list
-                rtp.push({ payload: 102, codec: "ulpfec", rate: 90000 }) //? Adds ulpfec to the RTP
-                //* H264 CODEC (103)
-                payloads.push(103) //? Add VP8 Payload Code
-                rtp.push({ payload: 103, codec: "H264", rate: 90000 }) //? Codec name
-                fmtp.push({ payload: 103, config: fmtpConfigs("H264", quality, fps) }) //? Codec config
-                rtcpfbPayloads.push(103) //? Add the codec payload for acknowledgement config
-                //* H264 RTX (104)
-                payloads.push(104) //? Add RTX to the payload
-                rtp.push({ payload: 104, codec: "rtx", rate: 90000 }) //? Codec name
-                fmtp.push({ payload: 104, config: "apt=103" }) //? Retransmit to the payload of previous codec
+                //* RED [PACKET REDUNDANCY] (96)
+                addRTPRTX(96, "red")
+                //* PACKET ERROR CORRECTION (98)
+                addRTPOnly(98, "ulpfec")
+                //* VP8 CODEC (99)
+                // addCODEC(99, "VP8", [
+                //     "max-fs=10200",
+                //     `max-fr=${fps}`,
+                // ].join(";"))
+                //* H264 CODEC (101)
+                // addCODEC(101, "H264", [
+                //     "profile-level-id=64001f",
+                //     "level-asymmetry-allowed=1",
+                //     "packetization-mode=1",
+                //     "max-fs=10200",
+                //     `max-mbps=${(quality / 1000) * 0.5}`
+                // ].join(";"))
+                //* NEW CODEC ()
+                // addCODEC(000, "", [
+                //     ""
+                // ].join(";"))
+                //* VP9 CODEC [8-Bit Non-sRGB] (xxx)
+                //! Poor Quality
+                // addCODEC(xxx, "VP9", [
+                //     "profile-id=0",
+                //     `max-fr=${fps}`,
+                //     "max-fs=10200"
+                // ].join(";"))
+                //* VP9 CODEC [8-Bit sRGB] (xxx)
+                //! Not working
+                // addCODEC(xxx, "VP9", [
+                //     "profile-id=1",
+                //     `max-fr=${fps}`,
+                //     "max-fs=10200"
+                // ].join(";"))
+                // TODO ADD MORE COMPATIBLE VIDEO CODECS
                 //* APPLYING NEW CODECS
                 modifiedSDP.media[mediaIndex].payloads = payloads.join(" ")
                 modifiedSDP.media[mediaIndex].rtp = rtp
                 modifiedSDP.media[mediaIndex].fmtp = fmtp
                 modifiedSDP.media[mediaIndex].rtcpFb = generateRTCPFB(rtcpfbPayloads)
+                modifiedSDP.media[mediaIndex].xGoogleFlag = extraConfigs.join(";")
                 break
             case "audio":
                 //* CLEAR DEFAULTS
@@ -81,6 +115,7 @@ export function transformSDP(sdp: string) {
                 //* APPLYING NEW CODECS
                 modifiedSDP.media[mediaIndex].payloads = "111 63"
                 modifiedSDP.media[mediaIndex].rtp = [
+                    // TODO ADD MORE AUIO CODECS
                     { payload: 111, codec: "opus", rate: 48000, encoding: 2 },
                     { payload: 63, codec: "red", rate: 48000, encoding: 2 }]
                 modifiedSDP.media[mediaIndex].fmtp = [
@@ -93,7 +128,7 @@ export function transformSDP(sdp: string) {
                             "minptime=10",
                             "ptime=15",
                             "maxptime=20",
-                            `maxaveragebitrate=${quality / 1000}`,
+                            `maxaveragebitrate=${(quality / 1000) * 1}`,
                             "maxplaybackrate=192000",
                         ].join(";")
                     },
@@ -106,41 +141,6 @@ export function transformSDP(sdp: string) {
         }
     })
     return write(modifiedSDP).replaceAll("262144", JSON.stringify(quality)) //? Send the modified SDP with the new max packet size
-}
-function fmtpConfigs(codec: "VP8" | "VP9" | "H264", quality: number, fps: number) {
-    const extraConfigs = [
-        "sprop-stereo=1",
-        `x-google-start-bitrate=${(quality / 1000) * 0.25}`,
-        `x-google-max-bitrate=${quality / 1000}`,
-        "x-google-max-quantization=40",
-        "x-google-min-quantization=10",
-        "x-google-buffer-initial-delay=1000",
-    ].join(";")
-    const payloadConfigs = {
-        VP8:
-            [
-                "profile-id=1",
-                "max-fs=12288",
-                "qp-min=10",
-                "qp-max=40",
-                `max-mbps=${quality / 1000}`,
-                `max-fr=${fps}`
-            ].concat(extraConfigs).join(";"),
-        VP9: [
-            "profile-id=1",
-            "max-fs=12288", //? Macroblock
-            `max-fr=${fps}`, //? FPS
-        ].concat(extraConfigs).join(";"),
-        H264: [
-            "level-asymmetry-allowed=1",
-            "packetization-mode=1",
-            "profile-level-id=64001f",
-            "max-fs=12288",
-            `max-fr=${fps}`,
-            `max-mbps=${quality / 1000}`
-        ].concat(extraConfigs).join(";")
-    }
-    return payloadConfigs[codec]
 }
 function generateRTCPFB(payloads: number[]) {
     const rtcpFb: MediaAttributes["rtcpFb"] = []

@@ -64,7 +64,7 @@ export default function Dock() {
                         for (const track of originalStream.getTracks()) {
                             track.applyConstraints({
                                 displaySurface: "window",
-                                frameRate: { min: 60, max: 90, ideal: 90 },
+                                frameRate: { exact: 60 },
                                 channelCount: 1,
                                 noiseSuppression: true,
                                 echoCancellation: true,
@@ -76,7 +76,7 @@ export default function Dock() {
                         for (const video of originalStream.getVideoTracks()) {
                             await video.applyConstraints({
                                 displaySurface: "window",
-                                frameRate: { min: 60, max: 90, ideal: 90 },
+                                frameRate: { exact: 60 },
                                 channelCount: 1,
                                 noiseSuppression: true,
                                 echoCancellation: true,
@@ -88,7 +88,7 @@ export default function Dock() {
                         for (const audio of originalStream.getAudioTracks()) {
                             audio.applyConstraints({
                                 displaySurface: "window",
-                                frameRate: { min: 60, max: 90, ideal: 90 },
+                                frameRate: { exact: 60 },
                                 channelCount: 1,
                                 noiseSuppression: true,
                                 echoCancellation: true,
