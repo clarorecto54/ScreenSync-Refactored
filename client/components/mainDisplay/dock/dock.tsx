@@ -4,6 +4,8 @@ import { useSession } from "@/components/hooks/useSession"
 import { useSocket } from "@/components/hooks/useSocket"
 import { useGlobals } from "@/components/hooks/useGlobals"
 import { transformSDP } from "@/components/utils.sdp"
+import { useState } from "react"
+import Reactions from "./reactions/reaction"
 /* ----- MAIN FUNCTIONS ----- */
 export default function Dock() {
     /* ----- STATES & HOOKS ----- */
@@ -21,6 +23,7 @@ export default function Dock() {
     /* -------- RENDERING ------- */
     return <div //* APP DOCK
         className="flex gap-[16px] justify-center items-center">
+        <Reactions />
         {((!isViewer && isStreaming && (streamAccess || isHost))) && <Button //* ANNOTATION
             circle useIcon iconSrc="/[Icon] Annotations.png" iconOverlay
             className={classMerge(
