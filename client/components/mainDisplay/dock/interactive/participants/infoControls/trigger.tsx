@@ -59,7 +59,9 @@ export default function InfoControlsTrigger({
                 style={{
                     translate: `0 -${(refHeight * 0.5) + (16 + 8)}px`
                 }}>
-                <InfoControlsPopup socketID={data.socketID} />
+                <InfoControlsPopup
+                    name={data.name}
+                    socketID={data.socketID} />
             </div>}
         </div>}
     </div>

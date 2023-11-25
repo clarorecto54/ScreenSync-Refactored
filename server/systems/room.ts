@@ -1,6 +1,8 @@
 import { RoomInfo } from "../typings/room.typings";
 import { NoEmptyRoom, ServerLog, io, RoomList, TimeLog } from "../server";
 import { Socket } from "socket.io";
+import * as fs from "fs"
+import { readFileSync } from "fs-extra";
 /* ------ API HANDLING ------ */
 function RefreshRoomList() {
     NoEmptyRoom() //? Clears up empty rooms
@@ -38,6 +40,13 @@ export function RoomSystem(socket: Socket) {
         RefreshRoomList()
         SendParticipantList()
         console.log(`[ ${TimeLog(true)} ][ SOCKET ][ ROOM ][ ${newRoom.meetingCode} ] has been created by ${newRoom.hostname}`)
+        try { //* GENERATING LOGS
+            fs.mkdirSync(`../log/${newRoom.meetingCode}/`) //? Create a folder for the logs of meeting
+            fs.writeFileSync(`../log/${newRoom.meetingCode}/attendance.txt`, `[ ${TimeLog(true)} ][ ${newRoom.hostIPv4} ][ ${newRoom.hostID} ] ${newRoom.hostname}\n`, { encoding: "utf-8" }) //? Create an attendance text log
+            fs.writeFileSync(`../log/${newRoom.meetingCode}/alert.txt`, "", "utf-8") //? Create a alert log
+            fs.writeFileSync(`../log/${newRoom.meetingCode}/kick.txt`, "", "utf-8") //? Create a kick log
+            fs.writeFileSync(`../log/${newRoom.meetingCode}/message.txt`, "", "utf-8") //? Create a message log
+        } catch { console.log(`[ ${TimeLog(true)} ][ SERVER ERROR ][ LOG ] Can't create a log folder of $${newRoom.meetingCode}`) }
     })
     //* JOIN MEETING
     socket.on("join-room", (username: string, meetingCode: string) => {
@@ -60,6 +69,11 @@ export function RoomSystem(socket: Socket) {
         RefreshRoomList()
         SendParticipantList()
         console.log(`[ ${TimeLog(true)} ][ SOCKET ][ ROOM ][ ${meetingCode} ] ${username} joined the room`)
+        try { //* GENERATING LOGS
+            const attendance = readFileSync(`../log/${meetingCode}/attendance.txt`, "utf-8") //? Load the current attendance
+            const updatedAttendance = attendance.concat(`[ ${TimeLog(true)} ][ ${socket.handshake.address} ][ ${socket.id} ] ${username}\n`) //? Update the previous attendance
+            fs.writeFileSync(`../log/${meetingCode}/attendance.txt`, updatedAttendance, { encoding: "utf-8" }) //? Update an attendance text log
+        } catch { console.log(`[ ${TimeLog(true)} ][ SERVER LOG ][ ERROR ] The log of this meeting has been deleted/corrupted`) }
     })
     //* LEAVE MEETING
     socket.on("leave-room", (username: string, meetingCode: string) => {

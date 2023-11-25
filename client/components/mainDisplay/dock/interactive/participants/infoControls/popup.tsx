@@ -4,7 +4,7 @@ import { useSession } from "@/components/hooks/useSession";
 import { useSocket } from "@/components/hooks/useSocket";
 import { classMerge } from "@/components/utils";
 import { useEffect, useState } from "react"
-export default function InfoControlsPopup({ socketID }: { socketID: string }) {
+export default function InfoControlsPopup({ name, socketID }: { name: string, socketID: string }) {
     /* ----- STATES & HOOKS ----- */
     const socket = useSocket()
     const { meetingCode } = useGlobals()
@@ -64,7 +64,7 @@ export default function InfoControlsPopup({ socketID }: { socketID: string }) {
             textSize={("small")}
             useIcon
             onClick={() => {
-                socket.socket.emit("alert-participant", meetingCode, socketID)
+                socket.socket.emit("alert-participant", name, meetingCode, socketID)
             }}
             className={classMerge(
                 "justify-start", //? Display
@@ -76,7 +76,7 @@ export default function InfoControlsPopup({ socketID }: { socketID: string }) {
             textSize={("small")}
             useIcon
             onClick={() => {
-                socket.socket.emit("kick-participant", meetingCode, socketID)
+                socket.socket.emit("kick-participant", name, meetingCode, socketID)
             }}
             className={classMerge(
                 "justify-start", //? Display

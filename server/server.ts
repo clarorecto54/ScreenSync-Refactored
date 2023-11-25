@@ -8,6 +8,7 @@ import { PeerServer } from "peer"
 import ChatSystem from "./systems/chat"
 import InteractiveSystem from "./systems/interactive"
 import PeerSystem from "./systems/peer"
+import * as fs from "fs"
 const os = require("os")
 /* -------- PORT & IP ------- */
 interface ServerProps { //* INTERFACE
@@ -70,7 +71,7 @@ export function ServerLog(
     server: "socket" | "peer",
     message: string
 ) {
-    console.log(`[ ${TimeLog(true)} ][ ${server.toUpperCase()} ] ${message}`)
+    console.log(`[ ${TimeLog(true)} ][ ${server.toUpperCase()} LOG ] ${message}`)
 }
 function ClearInactiveSockets() {
     var activeSockets: string[] = []
@@ -146,6 +147,9 @@ peer.on("disconnect", (client) => {
 httpsServer.listen(
     config.PORT,
     () => {
+        if (!fs.existsSync("../log/")) {
+            fs.mkdirSync("../log/")
+        }
         console.clear() //? Clear the log
         console.log(`[ ${TimeLog(true)} ][ SOCKET RUNNING ] https://${config.IP}:${config.PORT}`)
         console.log(`[ ${TimeLog(true)} ][ PEER RUNNING ] https://${config.IP}:${config.PORT + 1}`)

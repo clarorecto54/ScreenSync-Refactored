@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import { RoomList, TimeLog, io } from "../server";
 import { RoomInfo } from "../typings/room.typings";
-
+import * as fs from "fs"
 /* ------ SUB FUNCTION ------ */
 function SendUpdatedChatLog(meetingCode: string, room: RoomInfo) {
     io.to(meetingCode).emit("updated-chatLog", room.chatLog) //? Send to the participants the updated chat log
@@ -58,5 +58,9 @@ export default function ChatSystem(socket: Socket) {
                 return
             }
         })
+        try { //* GENERATING LOGS
+            const prevData = fs.readFileSync(`../log/${meetingCode}/message.txt`, "utf-8") //? Read message log
+            fs.writeFileSync(`../log/${meetingCode}/message.txt`, prevData.concat(`[ ${TimeLog(true)} ][ ${username} ] ${message}\n`), { encoding: "utf-8" })
+        } catch { console.log(`[ ${TimeLog(true)} ][ SEVER ERROR ][ LOG ] Can't update message log file of ${meetingCode}`) }
     })
 }
