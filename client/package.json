@@ -12,8 +12,7 @@
   "dependencies": {
     "@types/peerjs": "^1.1.0",
     "@types/react-color": "^3.0.7",
-    "@types/socket.io": "^3.0.2",
-    "@types/socket.io-client": "^3.0.0",
+    "@types/sdp-transform": "^2.4.9",
     "@types/uuid": "^9.0.5",
     "bufferutil": "^4.0.7",
     "class-variance-authority": "^0.7.0",
@@ -23,6 +22,8 @@
     "react": "^18",
     "react-color": "^2.19.3",
     "react-dom": "^18",
+    "sdp-transform": "^2.14.1",
+    "sharp": "^0.32.6",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
     "tw-merge": "^0.0.1-alpha.3",
