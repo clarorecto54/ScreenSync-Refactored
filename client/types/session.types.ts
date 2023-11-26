@@ -26,6 +26,10 @@ export interface SessionProps {
     setFullscreen: Dispatch<SetStateAction<boolean>>
     isAnnotating: boolean
     setIsAnnotating: Dispatch<SetStateAction<boolean>>
+    brushSize: number
+    setBrushSize: Dispatch<SetStateAction<number>>
+    brushColor: string
+    setBrushColor: Dispatch<SetStateAction<string>>
     activePopup: string
     setActivePopup: Dispatch<SetStateAction<string>>
     newMessage: boolean

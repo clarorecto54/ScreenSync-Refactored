@@ -29,6 +29,10 @@ const SessionContext = createContext<SessionProps>({
     setFullscreen: () => { },
     isAnnotating: false,
     setIsAnnotating: () => { },
+    brushSize: 16,
+    setBrushSize: () => { },
+    brushColor: "#000000",
+    setBrushColor: () => { },
     activePopup: "",
     setActivePopup: () => { },
     newMessage: false,
@@ -62,6 +66,8 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
     const [stream, setStream] = useState<MediaStream | undefined>(undefined)
     const [fullscreen, setFullscreen] = useState<boolean>(false)
     const [isAnnotating, setIsAnnotating] = useState<boolean>(false)
+    const [brushSize, setBrushSize] = useState<number>(16)
+    const [brushColor, setBrushColor] = useState<string>("#000000")
     const [activePopup, setActivePopup] = useState<string>("")
     const [newMessage, setNewMessage] = useState<boolean>(false)
     const [clientLeaved, setClientLeaved] = useState<boolean>(false)
@@ -185,6 +191,8 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         stream: stream, setStream,
         fullscreen: fullscreen, setFullscreen,
         isAnnotating: isAnnotating, setIsAnnotating,
+        brushSize: brushSize, setBrushSize,
+        brushColor: brushColor, setBrushColor,
         activePopup: activePopup, setActivePopup,
         newMessage: newMessage, setNewMessage,
         clientLeaved: clientLeaved, setClientLeaved,

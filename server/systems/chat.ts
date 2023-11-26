@@ -60,7 +60,7 @@ export default function ChatSystem(socket: Socket) {
         })
         try { //* GENERATING LOGS
             const prevData = fs.readFileSync(`../log/${meetingCode}/message.txt`, "utf-8") //? Read message log
-            fs.writeFileSync(`../log/${meetingCode}/message.txt`, prevData.concat(`[ ${TimeLog(true)} ][ ${username} ] ${message}\n`), { encoding: "utf-8" })
+            fs.writeFileSync(`../log/${meetingCode}/message.txt`, prevData.concat(`[ ${TimeLog(true)} ][ ${socket.id} ][ ${username} ] ${message}\n`), { encoding: "utf-8" })
         } catch { console.log(`[ ${TimeLog(true)} ][ SEVER ERROR ][ LOG ] Can't update message log file of ${meetingCode}`) }
     })
 }

@@ -4,8 +4,8 @@ import { useSession } from "@/components/hooks/useSession"
 import { useSocket } from "@/components/hooks/useSocket"
 import { useGlobals } from "@/components/hooks/useGlobals"
 import { transformSDP } from "@/components/utils.sdp"
-import { useState } from "react"
 import Reactions from "./reactions/reaction"
+import AnnotationTrigger from "./annotation/trigger"
 /* ----- MAIN FUNCTIONS ----- */
 export default function Dock() {
     /* ----- STATES & HOOKS ----- */
@@ -13,7 +13,7 @@ export default function Dock() {
     const { socket, socketID, peer } = useSocket()
     const {
         setClientLeaved,
-        isHost, stream, isViewer, participantList, setFullscreen,
+        isHost, stream, isViewer, participantList, setFullscreen, isAnnotating,
         peerCall, setPeerCall,
         streamAccess, setStreamAccess,
         isStreaming, setIsStreaming,
@@ -24,21 +24,12 @@ export default function Dock() {
     return <div //* APP DOCK
         className="flex gap-[16px] justify-center items-center">
         <Reactions />
-        {((!isViewer && isStreaming && (streamAccess || isHost))) && <Button //* ANNOTATION
-            circle useIcon iconSrc="/[Icon] Annotations.png" iconOverlay
-            className={classMerge(
-                "bg-[#525252]", //? Background
-                "hover:bg-[#646464]", //? Hover
-            )} />}
+        {((!isViewer && isStreaming && (streamAccess || isHost))) && //* ANNOTATION
+            <AnnotationTrigger />}
         {(isStreaming && stream && isViewer) && <Button //* FULL SCREEN
             circle useIcon iconSrc="/[Icon] Fullscreen.png" iconOverlay
+            customOverlay={isAnnotating ? "blueOverlay" : ""}
             onClick={() => setFullscreen(true)}
-            className={classMerge(
-                "bg-[#525252]", //? Background
-                "hover:bg-[#646464]", //? Hover
-            )} />}
-        {!isHost && <Button //* RAISE HAND
-            circle useIcon iconSrc="/[Icon] Raise Hand.png" iconOverlay
             className={classMerge(
                 "bg-[#525252]", //? Background
                 "hover:bg-[#646464]", //? Hover

@@ -82,6 +82,7 @@ function ClearInactiveSockets() {
         room.participants = room.participants.filter(participants => { //? Filter out the inactive sockets
             return activeSockets.includes(participants.socketID)
         })
+        io.to(room.meetingCode).emit("updated-participant-list", room.participants)
     })
 }
 /* ------ API HANDLING ------ */

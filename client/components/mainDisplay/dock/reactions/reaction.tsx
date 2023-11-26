@@ -39,7 +39,10 @@ export default function Reactions() {
                 return <Button //* EMOJI ICON
                     key={index}
                     circle textSize={"small"}
-                    onClick={() => socket.emit("send-message", { username, meetingCode, message })}
+                    onClick={() => {
+                        socket.emit("send-message", { username, meetingCode, message }) //? Send the reaction message
+                        setShowReactions(false) //? Close the reaction tab
+                    }}
                     className={classMerge(
                         "bg-[#525252]", //? Background
                         "hover:bg-[#646464]", //? Hover
