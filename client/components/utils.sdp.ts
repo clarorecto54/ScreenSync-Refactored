@@ -1,7 +1,7 @@
 import { write, parse, SessionDescription, MediaAttributes } from "sdp-transform"
 export function transformSDP(sdp: string) {
     const modifiedSDP: SessionDescription = parse(sdp)
-    const quality: number = 1000000 * 16
+    const quality: number = 1000000 * 32
     const fps: number = 60
     //* INITAITE NEW CODECS
     const payloads: number[] = []
@@ -30,6 +30,7 @@ export function transformSDP(sdp: string) {
                 "level-asymmetry-allowed=1",
                 "packetization-mode=1",
                 "max-fs=10200",
+                `max-fr=${fps}`,
                 `max-mbps=${(quality / 1000) * 0.5}`
             ].join(";")
         },
@@ -52,7 +53,7 @@ export function transformSDP(sdp: string) {
         if (config) {
             payloads.push(payload + 1) //? Add RTX to the payload
             rtp.push({ payload: payload + 1, codec: "rtx", rate: rate ? rate : 90000 }) //? Codec name
-            fmtp.push({ payload: payload + 1, config: `apt==${payload}` }) //? Retransmit to the payload of previous codec
+            fmtp.push({ payload: payload + 1, config: `apt=${payload}` }) //? Retransmit to the payload of previous codec
         }
     }
     function addRTPRTX(payload: number, codec: string, rate?: number, config?: string) {
@@ -141,15 +142,15 @@ export function transformSDP(sdp: string) {
                         ].join(";")
                     }
                 ]
-                modifiedSDP.media[mediaIndex].rtcpFb = generateRTCPFB([96])
+                modifiedSDP.media[mediaIndex].rtcpFb = generateRTCPFB([97])
                 break
             default:
                 break
         }
     })
     // return sdp //? Debug for normal SDP
-    console.log(write(modifiedSDP))
-    return write(modifiedSDP).replaceAll("262144", JSON.stringify(quality * 0.05)) //? Send the modified SDP with the new max packet size
+    // console.log(write(modifiedSDP))
+    return write(modifiedSDP).replaceAll("262144", JSON.stringify(quality * 0.1)) //? Send the modified SDP with the new max packet size
 }
 function generateRTCPFB(payloads: number[]) {
     const rtcpFb: MediaAttributes["rtcpFb"] = []

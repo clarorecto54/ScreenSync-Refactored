@@ -8,10 +8,10 @@ export default function Logo() {
         <div //* LOGO CONTAINER
             className="relative h-[calc(8*7px)] aspect-square">
             <Image //* LOGO
-                src="/[Logo] TUP.png"
+                src="/images/TUP.svg"
                 alt=""
                 fill
-                sizes="(max-wdth: 1200px) 100vw" />
+                sizes={'100vw'} />
         </div>
         <div //* APP NAME & SERVER STATUS
             className="flex flex-col">

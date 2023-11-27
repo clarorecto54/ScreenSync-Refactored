@@ -48,10 +48,10 @@ export default function Room({ //* ARGS
             {meetingKey && <div //* LOCKED SESSION ICON CONTAINER
                 className="relative h-[10px] aspect-square">
                 <Image //* LOCKED SESSION ICON
-                    src="/[Icons] Lock.png"
+                    src="/images/Lock.svg"
                     alt=""
                     fill
-                    sizes="(max-wdth: 512px) 100vw" />
+                    sizes={'100vw'} />
             </div>}</label>
         <label //* MEETING CODE
             className="text-[10px] italic hover:cursor-pointer">{meetingCode}</label>
@@ -77,7 +77,7 @@ export default function Room({ //* ARGS
             )}>
             {showInput && <Textbox //* PASSCODE INPUT
                 autoFocus password maxLength={32}
-                useIcon iconSrc="/[Icons] Key.png"
+                useIcon iconSrc="/images/Key.svg"
                 textSize={"small"} placeholder="Put the key here"
                 onChange={(thisElement) => {
                     setKey(thisElement.target.value)

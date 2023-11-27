@@ -27,7 +27,7 @@ export default function Dock() {
         {((!isViewer && isStreaming && (streamAccess || isHost))) && //* ANNOTATION
             <AnnotationTrigger />}
         {(isStreaming && stream && isViewer) && <Button //* FULL SCREEN
-            circle useIcon iconSrc="/[Icon] Fullscreen.png" iconOverlay
+            circle useIcon iconSrc="/images/Fullscreen.svg" iconOverlay
             customOverlay={isAnnotating ? "blueOverlay" : ""}
             onClick={() => setFullscreen(true)}
             className={classMerge(
@@ -36,7 +36,7 @@ export default function Dock() {
             )} />}
         {(isStreaming && stream && stream.getAudioTracks().length > 0) && <Button //* MUTE
             circle useIcon iconOverlay
-            iconSrc={muteStream ? "/[Icon] Audio (1).png" : "/[Icon] Audio (2).png"}
+            iconSrc={muteStream ? "/images/Audio (1).svg" : "/images/Audio (2).svg"}
             customOverlay={muteStream ? "redOverlay" : undefined}
             onClick={() => setMuteStream(!muteStream)}
             className={classMerge(
@@ -45,7 +45,7 @@ export default function Dock() {
             )} />}
         {(!isViewer || isHost) && <Button //* SHARE SCREEN
             circle useIcon iconOverlay
-            iconSrc={isStreaming ? "/[Icon] Share Screen (1).png" : "/[Icon] Share Screen (2).png"}
+            iconSrc={isStreaming ? "/images/Share Screen (1).svg" : "/images/Share Screen (2).svg"}
             customOverlay={(isStreaming || (!isHost && !streamAccess)) ? "redOverlay" : undefined}
             onClick={async () => {
                 if (isHost || streamAccess) {
@@ -130,7 +130,7 @@ export default function Dock() {
             )} />}
         <Button //* END CALL
             onClick={() => setClientLeaved(true)}
-            circle useIcon iconSrc="/[Icon] End Call.png" iconOverlay
+            circle useIcon iconSrc="/images/End Call.svg" iconOverlay
             containerClass="w-[calc(32px*3)]" />
     </div>
 }

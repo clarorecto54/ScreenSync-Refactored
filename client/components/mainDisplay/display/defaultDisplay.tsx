@@ -20,10 +20,10 @@ export default function DefaultDisplay() {
                 "transition-[opacity] duration-500" //? Animation
             )} >
             <Image //* LOGO
-                src="/[Logo] TUP.png"
+                src="/images/TUP.svg"
                 alt=""
                 fill
-                sizes="(max-wdth: 1200px) 100vw" />
+                sizes={'100vw'} />
         </div >
         <label //* SCHOOL NAME
             className={classMerge(

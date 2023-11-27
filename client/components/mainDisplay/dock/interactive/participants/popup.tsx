@@ -21,7 +21,7 @@ export default function ParticipantsPopup() {
         Viewers
         <Textbox //* SEARCH PARTICIPANTS
             autoFocus textSize={"small"} value={search}
-            useIcon iconSrc="/[Icon] Search.png"
+            useIcon iconSrc="/images/Search.svg"
             placeholder="Search participant here"
             containerClass="mb-[8px]"
             onChange={(thisElement) => setSearch(thisElement.target.value)} />

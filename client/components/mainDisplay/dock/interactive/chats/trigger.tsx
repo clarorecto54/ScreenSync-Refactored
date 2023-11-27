@@ -27,7 +27,7 @@ export default function ChatsTrigger() {
             ref={triggerRef}>
             <Button //* TRIGGER
                 useNotif={newMessage}
-                circle useIcon iconSrc="/[Icon] Chat.png" iconOverlay
+                circle useIcon iconSrc="/images/Chat.svg" iconOverlay
                 onClick={() => {
                     if (activePopup !== "chats") {
                         setActivePopup("chats")

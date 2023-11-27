@@ -21,7 +21,7 @@ export default function ParticipantsTrigger() {
         <div //* TRIGGER REFERENCE
             ref={triggerRef}>
             <Button //* TRIGGER
-                circle useIcon iconSrc="/[Icons] Participants.png" iconOverlay
+                circle useIcon iconSrc="/images/Participants.svg" iconOverlay
                 onClick={() => {
                     if (activePopup !== "participants") {
                         setActivePopup("participants")

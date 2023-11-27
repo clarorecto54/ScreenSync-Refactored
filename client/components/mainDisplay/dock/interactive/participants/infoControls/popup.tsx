@@ -35,7 +35,7 @@ export default function InfoControlsPopup({ name, socketID }: { name: string, so
         )}>
         {participantList.length > 1 && <Button //* MUTE BUTTON
             textSize={("small")}
-            useIcon
+            useIcon iconSrc="/images/Mute.svg"
             onClick={() => {
                 if (socket.socketID === socketID) { //? (You)
                     if (mutedList.length === 0) { //? No one is muted
@@ -62,7 +62,7 @@ export default function InfoControlsPopup({ name, socketID }: { name: string, so
         </Button>}
         {((socket.socketID !== socketID) && isHost) && <Button //* ALERT BUTTON
             textSize={("small")}
-            useIcon
+            useIcon iconSrc="/images/Alert.svg"
             onClick={() => {
                 socket.socket.emit("alert-participant", name, meetingCode, socketID)
             }}
@@ -74,7 +74,7 @@ export default function InfoControlsPopup({ name, socketID }: { name: string, so
             )} >Alert</Button>}
         {((socket.socketID !== socketID) && isHost) && <Button //* KICK BUTTON
             textSize={("small")}
-            useIcon
+            useIcon iconSrc="/images/Kick.svg"
             onClick={() => {
                 socket.socket.emit("kick-participant", name, meetingCode, socketID)
             }}

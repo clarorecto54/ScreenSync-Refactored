@@ -15,7 +15,7 @@ export default function AppDock() {
             "flex items-center justify-evenly Unselectable", //? Display
         )}>
         <Button //* COPY MEETING
-            useIcon iconSrc="/[Icon] Copy.png" iconOverlay
+            useIcon iconSrc="/images/Copy.svg" iconOverlay
             onClick={() => navigator.clipboard.writeText(meetingCode)}
             className={classMerge(
                 "bg-transparent", //? Background

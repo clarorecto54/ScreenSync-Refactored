@@ -86,10 +86,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
                         "aspect-square", //? Base Styling
                         iconOverlay ? customOverlay ? customOverlay : "whiteOverlay" : null, //? Conditional Styling
                     )}
-                    src={iconSrc ? iconSrc : "/[Icon] Missing.png"}
+                    src={iconSrc ? iconSrc : "/images/Missing.svg"}
                     alt=""
                     fill
-                    sizes="(max-wdth: 1200px) 100vw"
+                    sizes={'100vw'}
                 />
             </div>}
             {children}

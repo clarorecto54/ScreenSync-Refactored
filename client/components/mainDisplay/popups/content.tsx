@@ -12,9 +12,9 @@ export default function ContentPopup() {
     const [asset, setAsset] = useState<{ icon: string, message: string, CTAText: string }>({ icon: "", message: "", CTAText: "" })
     /* ------ EVENT HANDLER ----- */
     useEffect(() => {
-        if (activePopup.includes("Kick")) { setAsset({ icon: "/[Icon] Kick.png", message: "You have been kicked by the host", CTAText: "Back to Home" }) }
-        if (activePopup.includes("Alert")) { setAsset({ icon: "/[Icon] Alert.png", message: "Are you still there?", CTAText: "Yes I'm still here" }) }
-        if (activePopup.includes("Access")) { setAsset({ icon: "/[Icon] Share Screen (2).png", message: `${streamRequest.name} is asking for an access to stream`, CTAText: "Allow" }) }
+        if (activePopup.includes("Kick")) { setAsset({ icon: "/images/Kick.svg", message: "You have been kicked by the host", CTAText: "Back to Home" }) }
+        if (activePopup.includes("Alert")) { setAsset({ icon: "/images/Alert.svg", message: "Are you still there?", CTAText: "Yes I'm still here" }) }
+        if (activePopup.includes("Access")) { setAsset({ icon: "/images/Share Screen (2).svg", message: `${streamRequest.name} is asking for an access to stream`, CTAText: "Allow" }) }
     }, [activePopup, streamRequest, setActivePopup])
     /* -------- RENDERING ------- */
     if (["Alert", "Kick", "Access"].some(word => activePopup.includes(word))) {
@@ -34,7 +34,7 @@ export default function ContentPopup() {
                     src={asset.icon}
                     alt=""
                     fill
-                    sizes="(max-wdth: 512px) 100vw" />
+                    sizes={'100vw'} />
             </div>
             <div //* MAIN CONTAINER
                 className="flex flex-col gap-[8px] justify-center items-center px-[32px]">

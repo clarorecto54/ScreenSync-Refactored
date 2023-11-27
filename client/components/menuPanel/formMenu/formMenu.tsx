@@ -35,7 +35,7 @@ export default function FormMenu() {
         <div //* INPUTS
             className="flex flex-col gap-[8px]">
             <Textbox //* USERNAME
-                useIcon iconSrc="/[Icons] Participants.png"
+                useIcon iconSrc="/images/Participants.svg"
                 textSize={"small"} maxLength={32} value={username}
                 placeholder="What is your name?"
                 onChange={(thisElement) => {
@@ -43,7 +43,7 @@ export default function FormMenu() {
                 }} />
             {username.length > 3 && <Textbox //* MEETING PASSCODE
                 password
-                useIcon iconSrc="/[Icons] Key.png"
+                useIcon iconSrc="/images/Key.svg"
                 textSize={"small"} maxLength={32} value={key}
                 placeholder="Session key here"
                 onChange={(thisElement) => {
@@ -53,7 +53,7 @@ export default function FormMenu() {
         {username.length > 3 && <div //* CTA BUTTON
             className="flex gap-[8px] items-center justify-center">
             <Button //* START MEETING
-                useIcon iconSrc="/[Icon] Join.png" iconOverlay
+                useIcon iconSrc="/images/Join.svg" iconOverlay
                 textSize={"small"} type="submit"
                 onClick={() => {
                     const generatedCode = v4()

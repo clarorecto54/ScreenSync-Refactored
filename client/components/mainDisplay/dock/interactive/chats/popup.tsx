@@ -49,7 +49,7 @@ export default function ChatsPopup() {
             }}>
             <Textbox //* MESSAGE INPUT
                 value={message} ref={inputRef}
-                useSubmit SubmitSrc="/[Icon] Send.png"
+                useSubmit SubmitSrc="/images/Send.svg"
                 placeholder="Type your message here"
                 textSize={"small"} maxLength={255}
                 containerClass="shadow"

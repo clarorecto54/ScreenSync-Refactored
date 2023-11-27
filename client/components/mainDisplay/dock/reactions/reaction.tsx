@@ -53,7 +53,7 @@ export default function Reactions() {
             })}
         </div>}
         <Button //* REACTION
-            circle useIcon iconSrc="/[Icon] Reactions 2.png" iconOverlay
+            circle useIcon iconSrc="/images/Reactions 2.svg" iconOverlay
             onClick={() => {
                 setShowReactions(!showReactions)
             }}

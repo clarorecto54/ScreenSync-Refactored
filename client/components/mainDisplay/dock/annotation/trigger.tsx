@@ -15,11 +15,12 @@ export default function AnnotationTrigger() {
     const [showSettings, setShowSettings] = useState<boolean>(false)
     /* ------ EVENT HANDLER ----- */
     useEffect(() => {
-        if (containerRef.current) {
-            setRefHeight(containerRef.current.getBoundingClientRect().height)
-            setRefWidth(containerRef.current.getBoundingClientRect().width)
-            containerRef.current.addEventListener("mouseenter", () => {
-                containerRef.current?.addEventListener("wheel", (scroll) => {
+        const targetRef = containerRef.current
+        if (targetRef) {
+            setRefHeight(targetRef.getBoundingClientRect().height)
+            setRefWidth(targetRef.getBoundingClientRect().width)
+            targetRef.addEventListener("mouseenter", () => {
+                targetRef.addEventListener("wheel", (scroll) => {
                     if (scroll.deltaY > 0) { //? DOWN
                         setBrushSize((prevSize) => prevSize > 1 ? prevSize -= 0.5 : 1)
                     } else { //? UP
@@ -27,8 +28,8 @@ export default function AnnotationTrigger() {
                     }
                 })
             })
-            containerRef.current.addEventListener("mouseleave", () => {
-                containerRef.current?.removeEventListener("wheel", (scroll) => {
+            targetRef.addEventListener("mouseleave", () => {
+                targetRef.removeEventListener("wheel", (scroll) => {
                     if (scroll.deltaY > 0) { //? DOWN
                         setBrushSize((prevSize) => prevSize > 1 ? prevSize -= 0.5 : 1)
                     } else { //? UP
@@ -38,9 +39,9 @@ export default function AnnotationTrigger() {
             })
         }
         return () => {
-            if (containerRef.current) {
-                containerRef.current.removeEventListener("mouseenter", () => {
-                    containerRef.current?.addEventListener("wheel", (scroll) => {
+            if (targetRef) {
+                targetRef.removeEventListener("mouseenter", () => {
+                    targetRef.addEventListener("wheel", (scroll) => {
                         if (scroll.deltaY > 0) { //? DOWN
                             setBrushSize((prevSize) => prevSize > 1 ? prevSize -= 0.5 : 1)
                         } else { //? UP
@@ -48,8 +49,8 @@ export default function AnnotationTrigger() {
                         }
                     })
                 })
-                containerRef.current.removeEventListener("mouseleave", () => {
-                    containerRef.current?.removeEventListener("wheel", (scroll) => {
+                targetRef.removeEventListener("mouseleave", () => {
+                    targetRef.removeEventListener("wheel", (scroll) => {
                         if (scroll.deltaY > 0) { //? DOWN
                             setBrushSize((prevSize) => prevSize > 1 ? prevSize -= 0.5 : 1)
                         } else { //? UP
@@ -59,7 +60,7 @@ export default function AnnotationTrigger() {
                 })
             }
         }
-    }, [containerRef])
+    }, [containerRef, setBrushSize])
     /* -------- RENDERING ------- */
     return <div //* CONTAINER
         ref={containerRef}
@@ -76,7 +77,7 @@ export default function AnnotationTrigger() {
                 "absolute flex flex-col justify-center items-center gap-[8px]", //? Display
             )}>
             <Button //* BRUSH SIZE
-                circle useIcon iconSrc="/[Icon] Paint.png" iconOverlay textSize={"small"}
+                circle useIcon iconSrc="/images/Paint.svg" iconOverlay textSize={"small"}
                 containerClass="w-full rounded-full"
                 onClick={() => setIsAnnotating(!isAnnotating)}
                 className={classMerge(
@@ -88,7 +89,7 @@ export default function AnnotationTrigger() {
             <ColorTrigger
                 containerWidth={refWdith} />
             <Button //* CLEAR CANVAS
-                circle useIcon iconSrc="/[Icon] Erase.png" iconOverlay textSize={"small"}
+                circle useIcon iconSrc="/images/Erase.svg" iconOverlay textSize={"small"}
                 containerClass="w-full rounded-full"
                 className={classMerge(
                     "bg-[#525252]", //? Background
@@ -98,7 +99,7 @@ export default function AnnotationTrigger() {
             </Button>
         </div>}
         <Button //* ANNOTATION
-            circle useIcon iconSrc="/[Icon] Annotations.png" iconOverlay
+            circle useIcon iconSrc="/images/Annotations.svg" iconOverlay
             customOverlay={isAnnotating ? "blueOverlay" : ""}
             onClick={() => setShowSettings(!showSettings)}
             className={classMerge(

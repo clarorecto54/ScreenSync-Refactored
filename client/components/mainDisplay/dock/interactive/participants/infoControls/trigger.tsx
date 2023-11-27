@@ -42,7 +42,7 @@ export default function InfoControlsTrigger({
                 ref={triggerRef}>
                 <Button //* TRIGGER
                     circle textSize={"small"}
-                    useIcon iconSrc="/[Icon] 3 Dots.png"
+                    useIcon iconSrc="/images/3 Dots.svg"
                     onClick={() => {
                         if (activePopup === data.socketID) {
                             setActivePopup("")

@@ -14,10 +14,10 @@ export default function Home() {
       )}>
       <Image //* BACKGROUND IMAGE
         className="absolute object-cover -z-[1]"
-        src="/[Image] Background.png"
+        src="/images/Background.svg"
         alt=""
         fill
-        sizes="(max-wdth: 3194px) 100vw" />
+        sizes={'100vw'} />
       <div //* BACKDROP
         className={classMerge(
           "h-full w-full", //? Sizing

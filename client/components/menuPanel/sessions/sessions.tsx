@@ -21,7 +21,7 @@ export default function SessionsPanel() {
             className="pb-[16px]">
             <Textbox
                 textSize={"small"} placeholder="Find room here"
-                useIcon iconSrc="/[Icon] Search.png"
+                useIcon iconSrc="/images/Search.svg"
                 value={searchRoom}
                 onChange={(thisElement) => {
                     setSearchRoom(thisElement.target.value)

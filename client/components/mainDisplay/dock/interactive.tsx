@@ -13,7 +13,7 @@ export default function Interactive() {
         <ChatsTrigger />
         <ParticipantsTrigger />
         {isHost && <Button //* ATTENDANCE
-            circle useIcon iconSrc="/[Icon[ Attendance.png" iconOverlay
+            circle useIcon iconSrc="/images/Attendance 1.svg" iconOverlay
             className={classMerge(
                 "bg-[#525252]", //? Background
                 "hover:bg-[#646464]", //? Hover
