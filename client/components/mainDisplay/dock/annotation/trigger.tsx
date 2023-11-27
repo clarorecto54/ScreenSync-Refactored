@@ -6,6 +6,7 @@ import ColorTrigger from "./colorTrigger";
 export default function AnnotationTrigger() {
     /* ------ STATE & HOOKS ----- */
     const {
+        clearCanvas, setClearCanvas,
         isAnnotating, setIsAnnotating,
         brushSize, setBrushSize,
     } = useSession()
@@ -66,7 +67,7 @@ export default function AnnotationTrigger() {
         ref={containerRef}
         className={classMerge(
             "p-[8px]", //? Sizing
-            "flex justify-center items-center", //? Display
+            "flex justify-center items-center z-[3]", //? Display
             "backdrop-blur-md", //? Background
         )}>
         {showSettings && <div //* SETTINGS CONTAINER
@@ -91,6 +92,7 @@ export default function AnnotationTrigger() {
             <Button //* CLEAR CANVAS
                 circle useIcon iconSrc="/images/Erase.svg" iconOverlay textSize={"small"}
                 containerClass="w-full rounded-full"
+                onClick={() => !clearCanvas ? setClearCanvas(true) : setClearCanvas(false)}
                 className={classMerge(
                     "bg-[#525252]", //? Background
                     "hover:bg-[#646464]", //? Hover

@@ -1,6 +1,7 @@
 import { Socket } from "socket.io"
 import { TimeLog, io } from "../server"
 import * as fs from "fs"
+import { DrawLineProps, HostLineProps } from "../typings/annotation.types"
 export default function InteractiveSystem(socket: Socket) {
     //* ALERT PARTICIPANT
     socket.on("alert-participant", (name: string, meetingCode: string, targetID: string) => {
@@ -18,4 +19,8 @@ export default function InteractiveSystem(socket: Socket) {
             fs.writeFileSync(`../log/${meetingCode}/kick.txt`, prevData.concat(`[ ${TimeLog(true)} ][ ${targetID} ] ${name} has been kicked\n`))
         } catch { console.log(`[ ${TimeLog(true)} ][ SEVER ERROR ][ LOG ] Can't update kick log file of ${meetingCode}`) }
     })
+    socket.on("draw-line", (meetingCode: string, drawline: HostLineProps) => {
+        socket.broadcast.to(meetingCode).emit("draw-line", drawline)
+    })
+    socket.on("clear-canvas", (meetingCode: string) => socket.broadcast.to(meetingCode).emit("clear-canvas"))
 }

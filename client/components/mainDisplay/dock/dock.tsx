@@ -13,7 +13,8 @@ export default function Dock() {
     const { socket, socketID, peer } = useSocket()
     const {
         setClientLeaved,
-        isHost, stream, isViewer, participantList, setFullscreen, isAnnotating,
+        isHost, stream, isViewer, participantList, setFullscreen,
+        isAnnotating, setIsAnnotating,
         peerCall, setPeerCall,
         streamAccess, setStreamAccess,
         isStreaming, setIsStreaming,
@@ -59,7 +60,7 @@ export default function Dock() {
                             track.applyConstraints({
                                 displaySurface: "window",
                                 frameRate: { exact: 60 },
-                                channelCount: 1,
+                                channelCount: 2,
                                 noiseSuppression: true,
                                 echoCancellation: true,
                                 sampleRate: { min: 44100, max: 192000, ideal: 88200 },
@@ -71,7 +72,7 @@ export default function Dock() {
                             await video.applyConstraints({
                                 displaySurface: "window",
                                 frameRate: { exact: 60 },
-                                channelCount: 1,
+                                channelCount: 2,
                                 noiseSuppression: true,
                                 echoCancellation: true,
                                 sampleRate: { min: 44100, max: 192000, ideal: 88200 },
@@ -83,7 +84,7 @@ export default function Dock() {
                             audio.applyConstraints({
                                 displaySurface: "window",
                                 frameRate: { exact: 60 },
-                                channelCount: 1,
+                                channelCount: 2,
                                 noiseSuppression: true,
                                 echoCancellation: true,
                                 sampleRate: { min: 44100, max: 192000, ideal: 88200 },
@@ -115,12 +116,13 @@ export default function Dock() {
                             peerCall.forEach(call => call.close())
                         }
                         stream?.getTracks().forEach(track => track.stop()) //? Removes the "stop sharing" modal
+                        setIsAnnotating(false)
                         setStream(undefined)
                         setIsStreaming(false)
                         setStreamAccess(false)
                         socket.emit("change-stream-status", meetingCode, false)
                     }
-                } else {
+                } else { //? Ask for stream access from the host
                     socket.emit("get-stream-access", username, meetingCode)
                 }
             }}
