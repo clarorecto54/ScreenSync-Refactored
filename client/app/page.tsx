@@ -13,6 +13,7 @@ export default function Home() {
         "flex justify-center items-center", //? Display
       )}>
       <Image //* BACKGROUND IMAGE
+        priority
         className="absolute object-cover -z-[1]"
         src="/images/Background.svg"
         alt=""

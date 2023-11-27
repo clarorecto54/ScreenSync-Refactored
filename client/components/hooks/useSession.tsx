@@ -9,6 +9,7 @@ import { MediaConnection } from "peerjs"
 import { transformSDP } from "../utils.sdp"
 /* --------- CONTEXT -------- */
 const SessionContext = createContext<SessionProps>({
+    canvasRef: null,
     isViewer: false,
     setIsViewer: () => { },
     isHost: false,
@@ -29,6 +30,8 @@ const SessionContext = createContext<SessionProps>({
     setFullscreen: () => { },
     isAnnotating: false,
     setIsAnnotating: () => { },
+    annotationRatio: 0,
+    setAnnotationRatio: () => { },
     brushSize: 16,
     setBrushSize: () => { },
     brushColor: "#000000",
@@ -54,6 +57,7 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         username, setUsername,
         meetingCode, setMeetingCode
     } = useGlobals()
+    const canvasRef = useRef(null)
     const [isViewer, setIsViewer] = useState<boolean>(false)
     const [isHost, setIsHost] = useState<boolean>(false)
     const [streamRequest, setStreamRequest] = useState<{ id: string, name: string }>({ id: "", name: "" })
@@ -66,6 +70,7 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
     const [stream, setStream] = useState<MediaStream | undefined>(undefined)
     const [fullscreen, setFullscreen] = useState<boolean>(false)
     const [isAnnotating, setIsAnnotating] = useState<boolean>(false)
+    const [annotationRatio, setAnnotationRatio] = useState<number>(0)
     const [brushSize, setBrushSize] = useState<number>(16)
     const [brushColor, setBrushColor] = useState<string>("#000000")
     const [activePopup, setActivePopup] = useState<string>("")
@@ -88,6 +93,11 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         socket.emit("get-chatLog", meetingCode) //? Get room's chat log
         socket.emit("get-participant-list") //? Get participant list
         //* ON (RESPONSE)
+        socket.on("stream-ratio", (ratio: number) => {
+            if (ratio) {
+                setAnnotationRatio(ratio)
+            }
+        })
         socket.on("late-comer", (joinerID) => {
             if (peer && stream) {
                 setPeerCall(prevCall => [...prevCall, peer.call(joinerID, stream)])
@@ -179,6 +189,7 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
     }, [clientLeaved, socket, username, meetingCode, peerCall, stream, setUsername, setMeetingCode, streamAccess, isHost, isStreaming])
     /* -------- RENDERING ------- */
     return <SessionContext.Provider value={{
+        canvasRef: canvasRef,
         isViewer: isViewer, setIsViewer,
         isHost: isHost,
         streamRequest: streamRequest,
@@ -191,6 +202,7 @@ export function SessionContextProvider({ children }: { children: ReactNode }) {
         stream: stream, setStream,
         fullscreen: fullscreen, setFullscreen,
         isAnnotating: isAnnotating, setIsAnnotating,
+        annotationRatio: annotationRatio, setAnnotationRatio,
         brushSize: brushSize, setBrushSize,
         brushColor: brushColor, setBrushColor,
         activePopup: activePopup, setActivePopup,

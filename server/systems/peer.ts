@@ -20,4 +20,9 @@ export default function PeerSystem(socket: Socket) {
     socket.on("late-comer", lateID => {
         io.local.to(lateID).emit("view-status", true) //? Let the late comer knows that there's someone streaming
     })
+    socket.on("stream-ratio", (meetingCode: string, ratio: number) => {
+        if (ratio) {
+            socket.broadcast.to(meetingCode).emit("stream-ratio", ratio)
+        }
+    })
 }

@@ -43,10 +43,10 @@ console.log("RED (116) ", red)
 console.log("RTX (117) ", rtx)
 console.log("ULPFEC (118) ", ulpfec)
 //* TEST AREA
-// fs.mkdirSync(`./log/test`) //? Create a folder for the logs of meeting
-const prev = readFileSync("./log/test/attendance.txt", "utf-8")
-const newtxt = prev.concat("\n New line nigga")
-fs.writeFileSync(`./log/test/attendance.txt`, newtxt, { encoding: "utf-8" }) //? Create an attendance text log
+const test = 1
+if (test) {
+    console.log("Dang")
+}
 //* OUTPUTS
 writeFileSync("./test.txt", JSON.stringify(
     ver1.media[0].payloads
