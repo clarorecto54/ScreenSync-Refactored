@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction, RefObject } from "react"
 import { ParticipantsProps } from "./lobby.types"
 import { MediaConnection } from "peerjs";
+import { HostLineProps } from "./annotation.types";
 /* -------- INTERFACE ------- */
 export interface SessionProps {
-    canvasRef: RefObject<HTMLCanvasElement> | null
     isViewer: boolean
     setIsViewer: Dispatch<SetStateAction<boolean>>
     isHost: boolean
@@ -27,6 +27,10 @@ export interface SessionProps {
     setFullscreen: Dispatch<SetStateAction<boolean>>
     isAnnotating: boolean
     setIsAnnotating: Dispatch<SetStateAction<boolean>>
+    hostline: HostLineProps | null
+    setHostLine: Dispatch<SetStateAction<HostLineProps | null>>
+    clearCanvas: boolean
+    setClearCanvas: Dispatch<SetStateAction<boolean>>
     annotationRatio: number
     setAnnotationRatio: Dispatch<SetStateAction<number>>
     brushSize: number
